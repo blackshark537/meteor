@@ -1,0 +1,7 @@
+{
+  "name": "meteor",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
