@@ -1,12 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { AudioplayerService } from '../audioplayer.service';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tabs',
   templateUrl: 'tabs.page.html',
   styleUrls: ['tabs.page.scss']
 })
-export class TabsPage {
+export class TabsPage implements OnDestroy{
 
-  constructor() {}
+  timing: Subscription;
+  playing: boolean = false;
+  constructor(
+    audioCtrl: AudioplayerService
+  ) {
+
+  }
+
+  ngOnDestroy(){
+    this.timing.unsubscribe();
+  }
 
 }

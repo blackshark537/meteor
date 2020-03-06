@@ -28,6 +28,26 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'songs',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../songs/songs.module').then(m => m.SongsPageModule)
+          }
+        ]
+      },
+      {
+        path: 'search',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../search/search.module').then(m => m.SearchPageModule)
+          }
+        ]
+      },
+      {
         path: 'tab3',
         children: [
           {
