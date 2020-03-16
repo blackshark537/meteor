@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../Api.service';
 import { CategoryInteface } from '../global.interface';
-import { GlobalHttpService } from '../global.http.service';
 import { ToastController } from '@ionic/angular';
 
 @Component({
@@ -17,13 +16,12 @@ export class Tab1Page implements OnInit {
   sliderConfig = {
     spaceBetween: 0,
     centeredSlides: false,
-    slidesPerView: 2.3
+    slidesPerView: 1.6
   };
 
   constructor(
     private ApiService: ApiService,
-    private toastController: ToastController,
-    public httpConfg: GlobalHttpService,
+    private toastController: ToastController
   ) {
     
   }
@@ -37,6 +35,9 @@ export class Tab1Page implements OnInit {
     
     this.ApiService.getCategories('').subscribe(resp =>{
       this.categories = resp.docs;
+      this.categories.map(ctgry => {
+        ctgry.Albums.reverse();
+      });
     }, error => this.presentToast(error));  
   }
 
