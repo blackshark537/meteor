@@ -1,0 +1,95 @@
+<ion-header>
+  <ion-toolbar slot="start">
+    <ion-title>
+      AudioPlayer
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()" *ngIf="fromSongs">
+        <ion-icon name="close-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- #d33939 -->
+    <circle-progress
+      [percent]="100"
+      [maxPercent]="100"
+      [radius]="100"
+      [showTitle]="false"
+      [showSubtitle]="false"
+      [showUnits]="false"
+      [outerStrokeWidth]="4"
+      [outerStrokeColor]="'rgb(255, 153, 136)'"
+      [showImage]="true"
+      [imageSrc]="AlbumImg"
+      [imageHeight]="100"
+      [imageWidth]="100"
+      [showZeroOuterStroke]="false"
+      [showInnerStroke]="false"
+      [outerStrokeGradient]="true"
+      [outerStrokeGradientStopColor]="'rgb(255,85,56)'"
+    ></circle-progress>
+
+
+</ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <ion-row>
+      
+      <ion-col size="12" class="ion-text-center">
+          <ion-label>
+            <ion-text>{{TrackName}}</ion-text>
+          </ion-label>
+      </ion-col>
+      
+      <ion-col size="12" >
+        
+        <ion-range 
+        *ngIf="percent > 0;else elseBlock"
+        min="0" 
+        [max]="duration" 
+        (touchend)="seek($event.target.value)" 
+        (mouseup)="seek($event.target.value)" 
+        dualKnobs="false" pin="true" 
+        snaps="false" step="3" ticks="false"
+        [(ngModel)]="percent"
+        color="danger">
+        </ion-range>
+        
+        <!-- <input *ngIf="percent > 0;else elseBlock" class="danger" type="range" (change)="seek($event.target.value)" #range min="0" [max]="duration"  name="range" id="range" [(ngModel)]="percent" style="width: 100%;"> -->
+        <ng-template #elseBlock >
+          <p style="text-align: center;">{{isPlaying? 'Loading...' : ''}}</p>
+        </ng-template>
+        <div *ngIf="percent > 0">
+          <small style="position: absolute; left: 10px;">{{ minutes + ':'}} {{seconds < limit? '0' + seconds : + seconds }}</small>
+        <small style="position: absolute; right: 10px;">{{ minutesTotal + ':'}} {{secondsTotal < limit? '0' + secondsTotal : secondsTotal}}</small>
+        </div>
+      </ion-col>
+<!--       <ion-col  size="12">
+        
+      </ion-col> -->
+      
+      <ion-col size="12" class="ion-text-center">
+        <ion-button color="light" fill="clear" (click)="likeMe()" style="font-size: 1em;">
+          <ion-icon color="{{like_me? 'danger' : 'light'}}" name="heart"></ion-icon>
+        </ion-button>
+        <ion-button color="light" fill="clear" (click)="skipB()" style="font-size: 1em;">
+          <ion-icon name="skip-backward" color="dark"></ion-icon>
+        </ion-button>
+        <ion-button color="light"  fill="clear" (click)="togglePlayer()" style="font-size: 2em;">
+          <ion-icon name="{{isPlaying? 'pause' : 'play'}}" color="dark"></ion-icon>
+        </ion-button>
+        <ion-button color="light"  fill="clear" (click)="skipF()" style="font-size: 1em;">
+          <ion-icon name="skip-forward" color="dark"></ion-icon>
+        </ion-button>
+        <ion-button color="light" fill="clear" (click)="presentActionSheet()" style="font-size: 1em;">
+          <ion-icon color="dark" name="add-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <br>
+  </ion-toolbar>
+</ion-footer>

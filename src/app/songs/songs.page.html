@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" color="dark"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      {{Album? Album.Name : 'Songs'}}
+    </ion-title>
+  </ion-toolbar>
+  <ion-searchbar animated [(ngModel)]="search" (keydown)="searchTrack()"></ion-searchbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-img style="height: 256px; width: auto; z-index: -1;" [src]="Album.Artist? Album.Artist.ImageUrl : '/assets/icon.png'">
+  </ion-img>
+  <ion-fab-button color="tertiary"  class="fab-button-play" (click)="setTrackList(0)">
+    <ion-icon name="play"></ion-icon>
+  </ion-fab-button>
+
+  <ion-grid style="box-shadow: 0px -40px 45px rgb(0, 0, 0); z-index: 1000; position: relative;">
+
+    <ion-row>
+      <ion-col size="12">
+
+        <div *ngIf="Album.TrackList.length === 0;" 
+        class="ion-text-center" style="position: absolute; top: 10em; left: 5em; right: 5em;">
+          <ion-text>This Album is empty</ion-text>
+        </div>
+
+        <ion-list *ngIf="Album.TrackList.length > 0;">
+
+          <div *ngFor="let track of TrackList; index as i">
+            <ion-item (click)="setTrackList(i)" button>
+              <ion-thumbnail slot="start">
+                <ion-img [src]="Album.ImageUrl" ></ion-img>
+              </ion-thumbnail>
+              <ion-label>
+                <h5 class="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'danger marquee' : 'overfload dark'}}">
+                  <p>Track: {{activeTrack === (track.Name + ' - ' + track.ArtistName)? track.Name + ' - ' + track.ArtistName : track.Name | titlecase}} &nbsp;</p>
+                </h5>
+                <p *ngIf="activeTrack === (track.Name + ' - ' + track.ArtistName)" style="margin-top: 17px;">Album: {{track.AlbumName}}</p>
+                <p *ngIf="activeTrack != (track.Name + ' - ' + track.ArtistName)">Artist: {{track.ArtistName}}</p>
+              </ion-label>
+              <ion-icon name="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'pause' : 'play'}}" slot="end"></ion-icon>
+            </ion-item>
+          </div>
+          
+        </ion-list>
+        <ion-fab-button (click)="openModal()" class="fab-button" color="tertiary" >
+          <ion-icon name="arrow-up"></ion-icon>
+        </ion-fab-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
+

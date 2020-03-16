@@ -1,0 +1,100 @@
+.parallax {
+  /* The image used */
+
+  /* Set a specific height */
+  height: 500px;
+
+  /* Create the parallax scrolling effect */
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.marquee {
+  margin: 0 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  position: absolute;
+}
+
+.danger{
+  color: rgb(245,116,94);
+}
+
+h5{
+  max-width: 60%;
+}
+
+.overfload{
+  overflow: hidden;
+  max-width: 89%;
+}
+
+.marquee p {
+  display: inline-block;
+  padding-left: 100%;
+  font-size: 1.1em;
+  animation: marquee 5s linear infinite;
+}
+
+.marquee2 p {
+  animation-delay: 2.5s;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(-100%, 0);
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .fab-button-play{
+    position: absolute;
+    top: 7em;
+    left: 44%;
+    z-index: 1000;
+  }
+
+  .fab-button {
+    position: fixed;
+    bottom: 10px;
+    left: 44%;
+    z-index: 1000;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .fab-button-play{
+    position: absolute;
+    top: 7em;
+    left: 47%;
+    z-index: 1000;
+  }
+
+  .fab-button {
+    position: fixed;
+    bottom: 10px;
+    left: 47%;
+    z-index: 1000;
+  }
+}
+
+@media only screen and (min-width: 900px) {
+  .fab-button-play{
+    position: absolute;
+    top: 7em;
+    left: 47.5%;
+    z-index: 1000;
+  }
+
+  .fab-button {
+    position: fixed;
+    bottom: 10px;
+    left: 47.5%;
+    z-index: 1000;
+  }
+}
