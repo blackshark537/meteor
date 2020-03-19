@@ -123,7 +123,7 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
           console.log("closed");
         }
       }]
-    })
+    });
 
     await (await actionSheet).present();
   }
