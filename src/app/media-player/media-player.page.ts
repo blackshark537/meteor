@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { AudioplayerService } from 'src/app/services/audioplayer.service';
-import { interval, Subscription } from 'rxjs';
-import { StorageService } from '../services/storage.service';
+import { interval, Subscription, Observable } from 'rxjs';
 import { ActionSheetController } from '@ionic/angular';
-import { RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppState } from '../models/app.state';
+import * as _Actions from '../actions/media.actions';
+import { TrackInterface } from '../models/global.interface';
 
 @Component({
   selector: 'app-media-player',
@@ -14,7 +16,6 @@ import { RouterLink } from '@angular/router';
 export class MediaPlayerPage implements OnInit, OnDestroy {
   
   @Input('fromSongs') fromSongs: boolean = false;
-  //@ViewChild('range', { static: false}) range: IonRange;
 
   TrackName: string;
   AlbumImg: string;
@@ -29,18 +30,29 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   lastTime: number = 0;
   timer: Subscription;
   trackUrl: string;
+  TrackList: TrackInterface[];
   like_me: boolean;
   animation: number;
+  lastTrack: string;
 
   constructor(
     private modalCtrl: ModalController,
     public audioCtrl: AudioplayerService,
-    private storage: StorageService,
+    private store: Store<AppState>,
     private actionSheetCtrl: ActionSheetController
-  ) {
-  }
+  ) {  }
 
   ngOnInit(){
+
+    this.store.select('MediaState').subscribe((val: AppState) => {
+      this.TrackName = val.trackName;
+      this.trackUrl = val.currentTrack;
+      this.isPlaying = val.isPlaying;
+      this.AlbumImg = val.AlbumImg;
+      this.TrackList = val.trackList;
+      this.lastTrack = val.currentTrack;
+    });
+
     this.animation = 0;
     let inter = setInterval(()=>{
       this.animation+= 2;
@@ -49,19 +61,10 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
         console.log('clean');
       }
     }, 10);
-    
+
     this.like_me = false;
-    this.isPlaying = this.audioCtrl.playing;
+    
     this.timer = interval(500).subscribe(()=>{
-      //modified, using storageService instead of localstorage
-      if(!this.AlbumImg || this.AlbumImg != this.storage.getAlbumImg()){
-        this.AlbumImg = this.storage.getAlbumImg();
-      }
-      //modified, using storageService instead of localstorage
-      if(!this.TrackName || this.TrackName != this.storage.getTrackName()){
-        this.TrackName = this.storage.getTrackName();
-        window.document.title = this.TrackName;
-      }
 
       if(!this.duration || this.duration != this.audioCtrl.getDuration()){
         this.duration = this.audioCtrl.getDuration();
@@ -76,9 +79,8 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
     });
 
     //bug here not play when is fromSongs
-    if(!this.isPlaying && !this.fromSongs){
-      this.trackUrl = this.storage.getCurrentTrack();
-      this.audioCtrl.setSrc(this.trackUrl);
+    if(this.TrackList.length != 0 && !this.isPlaying && !this.fromSongs){
+      this.audioCtrl.setSrc(this.lastTrack);
     }
   }
 
@@ -89,10 +91,12 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   togglePlayer(){
     if(this.isPlaying){
       this.audioCtrl.pause();
-      this.isPlaying = false;
+      
+      this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
     } else {
       this.audioCtrl.resume();
-      this.isPlaying = true;
+      
+      this.store.dispatch(_Actions.isPlaying({isPlaying: true}));
     }
   }
 

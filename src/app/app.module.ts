@@ -10,6 +10,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
+// NGRX Modules
+import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from 'src/environments/environment';
+
+import { MediaReducer } from './reducers/media.redux';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -17,7 +24,11 @@ import { AppComponent } from './app.component';
     BrowserModule,
     IonicModule.forRoot(), 
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    StoreModule.forRoot({
+      MediaState: MediaReducer
+    }),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production})
   ],
   providers: [
     StatusBar,

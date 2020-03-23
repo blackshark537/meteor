@@ -35,12 +35,6 @@ export class SearchPage implements OnInit {
       this.albums = [];
       this.apiService.getTrack(this.search.value).subscribe(resp=>{
         this.list = resp.docs;
-        // pick the firsts 3
-        /* resp.docs.map((val, i)=>{
-          if(i < 3){
-            this.list.push(val);
-          }
-        }) */
       }, error => this.presentToast(error));
 
       this.apiService.getAlbumByName(this.search.value).subscribe(resp=>{
@@ -51,7 +45,6 @@ export class SearchPage implements OnInit {
 
   setTrackList(index: number){
     this.audioCtrl.setTrackList(this.list, index);
-    //modified, using storageService instead of localstorage
     this.storge.setAlbumImg('/assets/thumbnail.svg');
     this.openModal();
   }

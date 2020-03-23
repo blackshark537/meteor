@@ -5,7 +5,9 @@ import { ActivatedRoute } from '@angular/router';
 import { ToastController, ModalController } from '@ionic/angular'
 import { MediaPlayerPage } from '../media-player/media-player.page';
 import { AudioplayerService } from '../services/audioplayer.service';
-import { StorageService } from '../services/storage.service';
+import { Store } from '@ngrx/store';
+import { AppState } from '../models/app.state';
+import * as _Actions from '../actions/media.actions';
 
 @Component({
   selector: 'app-songs',
@@ -32,17 +34,17 @@ export class SongsPage implements OnInit, OnDestroy {
     private toastController: ToastController,
     private modalController: ModalController,
     public audioCtrl: AudioplayerService,
-    private storage: StorageService
+    private store: Store<AppState>
   ) { }
 
   ngOnInit() {
     this.activeTrack = null;
-    //modified, using storageService instead of localstorage
-    this.timer = setInterval(()=>{
-       if(!this.activeTrack || this.activeTrack != this.storage.getTrackName()){
-        this.activeTrack = this.storage.getTrackName();
-       }
-    },1000);
+
+    this.store.select('MediaState').subscribe((vals: AppState) =>{
+        this.activeTrack = vals.trackName;
+        window.document.title = vals.trackName;
+    });
+
     const id = this.activeRoute.snapshot.paramMap.get('id');
     this.albumService.getAlbum(id).subscribe(resp => {
       this.Album = resp.doc;
@@ -57,7 +59,9 @@ export class SongsPage implements OnInit, OnDestroy {
   setTrackList(index: number){
     this.audioCtrl.setTrackList(this.TrackList, index);
     //modified, using storageService instead of localstorage
-    this.storage.setAlbumImg(this.Album.ImageUrl);
+    //this.storage.setAlbumImg(this.Album.ImageUrl);
+    this.store.dispatch(_Actions.Set_AlbumImg({AlbumImg: this.Album.ImageUrl}));
+    this.store.dispatch(_Actions.Set_TrackList({TrackList: this.TrackList}))
     this.openModal();
   }
 
