@@ -12,9 +12,9 @@
 </ion-header>
 
 <ion-content>
-  <!-- #d33939 -->
+  <!-- #d33939  -->
     <circle-progress
-      [percent]="100"
+      [percent]="animation"
       [maxPercent]="100"
       [radius]="100"
       [showTitle]="false"
@@ -31,8 +31,7 @@
       [outerStrokeGradient]="true"
       [outerStrokeGradientStopColor]="'rgb(255,85,56)'"
     ></circle-progress>
-
-
+      <!-- <img [src]="AlbumImg"> -->
 </ion-content>
 
 <ion-footer>
@@ -72,7 +71,7 @@
         
       </ion-col> -->
       
-      <ion-col size="12" class="ion-text-center">
+      <ion-col size="12" class="ion-text-center" style="margin-top: 1em;">
         <ion-button color="light" fill="clear" (click)="likeMe()" style="font-size: 1em;">
           <ion-icon color="{{like_me? 'danger' : 'light'}}" name="heart"></ion-icon>
         </ion-button>
@@ -90,6 +89,5 @@
         </ion-button>
       </ion-col>
     </ion-row>
-    <br>
   </ion-toolbar>
 </ion-footer>

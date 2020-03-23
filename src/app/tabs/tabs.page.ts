@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { AudioplayerService } from '../audioplayer.service';
+import { AudioplayerService } from '../services/audioplayer.service';
 import { interval, Subscription } from 'rxjs';
 
 @Component({

@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
-import { AudioplayerService } from 'src/app/audioplayer.service';
+import { AudioplayerService } from 'src/app/services/audioplayer.service';
 import { interval, Subscription } from 'rxjs';
-import { StorageService } from '../storage.service';
+import { StorageService } from '../services/storage.service';
 import { ActionSheetController } from '@ionic/angular';
 import { RouterLink } from '@angular/router';
 
@@ -30,6 +30,7 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   timer: Subscription;
   trackUrl: string;
   like_me: boolean;
+  animation: number;
 
   constructor(
     private modalCtrl: ModalController,
@@ -40,6 +41,15 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   }
 
   ngOnInit(){
+    this.animation = 0;
+    let inter = setInterval(()=>{
+      this.animation+= 2;
+      if(this.animation> 99){
+        clearInterval(inter);
+        console.log('clean');
+      }
+    }, 10);
+    
     this.like_me = false;
     this.isPlaying = this.audioCtrl.playing;
     this.timer = interval(500).subscribe(()=>{

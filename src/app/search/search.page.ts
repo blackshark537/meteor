@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModalController, ToastController } from '@ionic/angular';
-import { ApiService } from '../Api.service';
-import { AudioplayerService } from '../audioplayer.service';
+import { ApiService } from '../services/Api.service';
+import { AudioplayerService } from '../services/audioplayer.service';
 import { MediaPlayerPage } from '../media-player/media-player.page';
-import { ALbumInterface } from '../global.interface';
-import { StorageService } from '../storage.service';
+import { ALbumInterface } from '../models/global.interface';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-search',

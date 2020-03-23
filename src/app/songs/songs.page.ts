@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ApiService } from '../Api.service';
-import { ALbumInterface, TrackInterface } from '../global.interface';
+import { ApiService } from '../services/Api.service';
+import { ALbumInterface, TrackInterface } from '../models/global.interface';
 import { ActivatedRoute } from '@angular/router';
 import { ToastController, ModalController } from '@ionic/angular'
 import { MediaPlayerPage } from '../media-player/media-player.page';
-import { AudioplayerService } from '../audioplayer.service';
-import { StorageService } from '../storage.service';
+import { AudioplayerService } from '../services/audioplayer.service';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'app-songs',

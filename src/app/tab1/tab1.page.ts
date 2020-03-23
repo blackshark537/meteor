@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from '../Api.service';
-import { CategoryInteface } from '../global.interface';
+import { ApiService } from '../services/Api.service';
+import { CategoryInteface } from '../models/global.interface';
 import { ToastController } from '@ionic/angular';
 
 @Component({

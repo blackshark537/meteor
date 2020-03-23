@@ -30,3 +30,5 @@ deploy.sh
 /platforms
 /plugins
 /www
+/electron
+/android
