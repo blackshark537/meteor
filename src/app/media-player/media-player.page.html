@@ -13,7 +13,7 @@
 
 <ion-content>
   <!-- #d33939  -->
-    <circle-progress
+    <!-- <circle-progress
       [percent]="animation"
       [maxPercent]="100"
       [radius]="100"
@@ -31,23 +31,31 @@
       [outerStrokeGradient]="true"
       [outerStrokeGradientStopColor]="'rgb(255,85,56)'"
     ></circle-progress>
-      <!-- <img [src]="AlbumImg"> -->
+    style="box-shadow: 0px 0px 34px 10px lightseagreen ;"
+   -->
+      <div style="padding: 0px;
+      margin-top: 1em;
+       width: 300px; margin-left: auto;
+       margin-right: auto; margin-top: 2em; margin-bottom: auto;">
+        <img [src]="AlbumImg" 
+        width="auto" height="auto">
+      </div>
 </ion-content>
 
 <ion-footer>
   <ion-toolbar>
     <ion-row>
-      
+
       <ion-col size="12" class="ion-text-center">
-          <ion-label>
-            <ion-text>{{TrackName}}</ion-text>
-          </ion-label>
+        <ion-label>
+          <ion-text>{{TrackName}}</ion-text>
+        </ion-label>
       </ion-col>
       
       <ion-col size="12" >
         
         <ion-range 
-        *ngIf="percent > 0;else elseBlock"
+        *ngIf="!_loading;else elseBlock"
         min="0" 
         [max]="duration" 
         (touchend)="seek($event.target.value)" 
@@ -57,24 +65,18 @@
         [(ngModel)]="percent"
         color="danger">
         </ion-range>
-        
-        <!-- <input *ngIf="percent > 0;else elseBlock" class="danger" type="range" (change)="seek($event.target.value)" #range min="0" [max]="duration"  name="range" id="range" [(ngModel)]="percent" style="width: 100%;"> -->
+
         <ng-template #elseBlock >
-          <p style="text-align: center;">{{isPlaying? 'Loading...' : ''}}</p>
+          <p style="text-align: center;">Loading...</p>
         </ng-template>
+
         <div *ngIf="percent > 0">
           <small style="position: absolute; left: 10px;">{{ minutes + ':'}} {{seconds < limit? '0' + seconds : + seconds }}</small>
-        <small style="position: absolute; right: 10px;">{{ minutesTotal + ':'}} {{secondsTotal < limit? '0' + secondsTotal : secondsTotal}}</small>
+          <small style="position: absolute; right: 10px;">{{ minutesTotal + ':'}} {{secondsTotal < limit? '0' + secondsTotal : secondsTotal}}</small>
         </div>
       </ion-col>
-<!--       <ion-col  size="12">
-        
-      </ion-col> -->
       
-      <ion-col size="12" class="ion-text-center" style="margin-top: 1em;">
-        <ion-button color="light" fill="clear" (click)="likeMe()" style="font-size: 1em;">
-          <ion-icon color="{{like_me? 'danger' : 'light'}}" name="heart"></ion-icon>
-        </ion-button>
+      <ion-col size="12" class="ion-text-center">
         <ion-button color="light" fill="clear" (click)="skipB()" style="font-size: 1em;">
           <ion-icon name="skip-backward" color="dark"></ion-icon>
         </ion-button>
@@ -84,8 +86,33 @@
         <ion-button color="light"  fill="clear" (click)="skipF()" style="font-size: 1em;">
           <ion-icon name="skip-forward" color="dark"></ion-icon>
         </ion-button>
-        <ion-button color="light" fill="clear" (click)="presentActionSheet()" style="font-size: 1em;">
-          <ion-icon color="dark" name="add-circle-outline"></ion-icon>
+      </ion-col>
+
+    </ion-row>
+
+    <ion-row>
+      <ion-col size="3" class="ion-text-center">
+        <ion-button color="{{like_me? 'danger' : 'light'}}" fill="clear" (click)="likeMe()" style="font-size: 1em;">
+          <ion-icon  name="heart"></ion-icon>
+        </ion-button>
+      </ion-col>
+
+      <ion-col size="3" class="ion-text-center">
+        <ion-button color="{{_repeat? 'dark' : 'light'}}" fill="clear" (click)="repeat()" style="font-size: 1em;">
+          <ion-icon name="repeat"></ion-icon>
+          <div *ngIf="_repeat" style="position: absolute; top: 1px; right: 10px;">1</div>
+        </ion-button>
+      </ion-col>
+
+      <ion-col size="3" class="ion-text-center">
+        <ion-button color="{{_shuffle? 'dark' : 'light'}}" fill="clear" (click)="shuffle()" style="font-size: 1em;">
+          <ion-icon name="shuffle"></ion-icon>
+        </ion-button>
+      </ion-col>
+
+      <ion-col size="3" class="ion-text-center">
+        <ion-button color="dark" fill="clear" (click)="presentActionSheet()" style="font-size: 1em;">
+          <ion-icon name="menu"></ion-icon>
         </ion-button>
       </ion-col>
     </ion-row>

@@ -1,7 +1,7 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { AudioplayerService } from 'src/app/services/audioplayer.service';
-import { interval, Subscription, Observable } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 import { ActionSheetController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
@@ -18,6 +18,7 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   @Input('fromSongs') fromSongs: boolean = false;
 
   TrackName: string;
+  lastTrack: number;
   AlbumImg: string;
   percent: number = 0;
   limit: number = 10;
@@ -27,13 +28,13 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   secondsTotal: number = 0;
   minutesTotal: number = 0;
   isPlaying: boolean = false;
+  _loading: boolean = false;
+  _repeat: boolean = false;
+  _shuffle: boolean = false;
   lastTime: number = 0;
   timer: Subscription;
-  trackUrl: string;
   TrackList: TrackInterface[];
   like_me: boolean;
-  animation: number;
-  lastTrack: string;
 
   constructor(
     private modalCtrl: ModalController,
@@ -46,21 +47,14 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
 
     this.store.select('MediaState').subscribe((val: AppState) => {
       this.TrackName = val.trackName;
-      this.trackUrl = val.currentTrack;
       this.isPlaying = val.isPlaying;
       this.AlbumImg = val.AlbumImg;
       this.TrackList = val.trackList;
       this.lastTrack = val.currentTrack;
+      this._loading = val.loading;
+      this._repeat = val.repeat;
+      this._shuffle = val.shuffle;
     });
-
-    this.animation = 0;
-    let inter = setInterval(()=>{
-      this.animation+= 2;
-      if(this.animation> 99){
-        clearInterval(inter);
-        console.log('clean');
-      }
-    }, 10);
 
     this.like_me = false;
     
@@ -78,10 +72,6 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
       
     });
 
-    //bug here not play when is fromSongs
-    if(this.TrackList.length != 0 && !this.isPlaying && !this.fromSongs){
-      this.audioCtrl.setSrc(this.lastTrack);
-    }
   }
 
   ngOnDestroy(){
@@ -89,13 +79,14 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   }
 
   togglePlayer(){
-    if(this.isPlaying){
+    if(this.TrackList.length != 0 && !this.isPlaying && !this.fromSongs){
+      //this.audioCtrl.setSrc(this.lastTrack);
+      this.audioCtrl.setTrackList(this.TrackList, this.lastTrack)
+    } else if(this.isPlaying){
       this.audioCtrl.pause();
-      
       this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
     } else {
       this.audioCtrl.resume();
-      
       this.store.dispatch(_Actions.isPlaying({isPlaying: true}));
     }
   }
@@ -145,5 +136,13 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   likeMe(){
     this.like_me = !this.like_me;
     console.log(this.like_me);
+  }
+
+  repeat(){
+    this.store.dispatch(_Actions.repeat({repeat: !this._repeat}));
+  }
+
+  shuffle(){
+    this.store.dispatch(_Actions.shuffle({shuffle: !this._shuffle}));
   }
 }

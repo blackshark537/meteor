@@ -61,7 +61,6 @@ export class SongsPage implements OnInit, OnDestroy {
     //modified, using storageService instead of localstorage
     //this.storage.setAlbumImg(this.Album.ImageUrl);
     this.store.dispatch(_Actions.Set_AlbumImg({AlbumImg: this.Album.ImageUrl}));
-    this.store.dispatch(_Actions.Set_TrackList({TrackList: this.TrackList}))
     this.openModal();
   }
 

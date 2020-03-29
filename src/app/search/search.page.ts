@@ -3,8 +3,10 @@ import { ModalController, ToastController } from '@ionic/angular';
 import { ApiService } from '../services/Api.service';
 import { AudioplayerService } from '../services/audioplayer.service';
 import { MediaPlayerPage } from '../media-player/media-player.page';
-import { ALbumInterface } from '../models/global.interface';
-import { StorageService } from '../services/storage.service';
+import { ALbumInterface, TrackInterface } from '../models/global.interface';
+import {Store} from '@ngrx/store';
+import {Set_AlbumImg} from '../actions/media.actions';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-search',
@@ -15,7 +17,7 @@ export class SearchPage implements OnInit {
 
   @ViewChild('search', {static: false}) search;
 
-  list: any[] = [];
+  list: TrackInterface[] = [];
   albums: ALbumInterface[] = [];
 
   constructor(
@@ -23,7 +25,7 @@ export class SearchPage implements OnInit {
     private audioCtrl: AudioplayerService,
     private toastController: ToastController,
     private modalController: ModalController,
-    private storge: StorageService
+    private store: Store<any>
   ) { }
 
   ngOnInit() {
@@ -34,18 +36,27 @@ export class SearchPage implements OnInit {
       this.list = [];
       this.albums = [];
       this.apiService.getTrack(this.search.value).subscribe(resp=>{
-        this.list = resp.docs;
+        resp.docs.filter((val, index) => {
+          if(index <=20){
+            this.list.push(val);
+          }
+        });
       }, error => this.presentToast(error));
 
       this.apiService.getAlbumByName(this.search.value).subscribe(resp=>{
-        this.albums.push(... resp.docs);
+        resp.docs.filter((val, index) => {
+          if(index <=5){
+            this.albums.push(val);
+          }
+        });
       }, error => this.presentToast(error));
     }
   }
 
   setTrackList(index: number){
     this.audioCtrl.setTrackList(this.list, index);
-    this.storge.setAlbumImg('/assets/thumbnail.svg');
+    //this.storge.setAlbumImg('/assets/thumbnail.svg');
+    this.store.dispatch(Set_AlbumImg({AlbumImg: '/assets/thumbnail.svg'}));
     this.openModal();
   }
 
