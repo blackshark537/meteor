@@ -55,7 +55,7 @@
       <ion-col size="12" >
         
         <ion-range 
-        *ngIf="!_loading;else elseBlock"
+        *ngIf="!_loading;else elseBlock;"
         min="0" 
         [max]="duration" 
         (touchend)="seek($event.target.value)" 
@@ -67,7 +67,9 @@
         </ion-range>
 
         <ng-template #elseBlock >
-          <p style="text-align: center;">Loading...</p>
+          <div style="padding-left: 46%; padding-right: 45%">
+            <ion-spinner name="lines"></ion-spinner>
+          </div>
         </ng-template>
 
         <div *ngIf="percent > 0">
@@ -80,7 +82,7 @@
         <ion-button color="light" fill="clear" (click)="skipB()" style="font-size: 1em;">
           <ion-icon name="skip-backward" color="dark"></ion-icon>
         </ion-button>
-        <ion-button color="light"  fill="clear" (click)="togglePlayer()" style="font-size: 2em;">
+        <ion-button [disabled]="_loading" color="light"  fill="clear" (click)="togglePlayer()" style="font-size: 2em;">
           <ion-icon name="{{isPlaying? 'pause' : 'play'}}" color="dark"></ion-icon>
         </ion-button>
         <ion-button color="light"  fill="clear" (click)="skipF()" style="font-size: 1em;">
