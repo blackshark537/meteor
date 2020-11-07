@@ -34,19 +34,12 @@
       <ion-slides [options]="sliderConfig">
         <ion-slide *ngFor="let album of catgry.Albums">
           
-          <ion-card  class="ion-no-padding" [routerLink]="['/songs', album._id]" style="max-height: 23.5em;">
-            <img [src]="album.ImageUrl" style="width: 200px; height: 200px;" alt="">
-            
-              
-                <!-- <ion-avatar slot="start">
-                  <ion-img src="assets/icon.png"></ion-img>
-                </ion-avatar> -->
-                
-                  <ion-text color="dark">{{album.Name.length >16? album.Name.slice(0,14) + '...' : album.Name}}</ion-text>
-                  <!-- <h4>{{album.releaseDate}}</h4> -->
-                
-              
-            
+          <ion-card [routerLink]="['/songs', album._id]" style="max-height: 23.5em;">
+            <img [src]="album.ImageUrl" style="width: 200px; height: 200px;" alt="cover">
+            <ion-text color="dark">
+              <h4>{{album.Name.length >16? album.Name.slice(0,14) + '...' : album.Name}}</h4>
+            </ion-text>
+            <small>{{album.releaseDate}}</small>
           </ion-card>
         
         </ion-slide>

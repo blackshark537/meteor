@@ -84,6 +84,7 @@ export class SongsPage implements OnInit, OnDestroy {
       animated: true,
       id: 'mediaplayer',
       backdropDismiss: true,
+      swipeToClose: true,
       mode: 'ios',
       showBackdrop: true,
       componentProps: {

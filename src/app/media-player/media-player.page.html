@@ -1,17 +1,18 @@
-<ion-header>
-  <ion-toolbar slot="start">
+<ion-header [translucent]="true">
+  <ion-toolbar>
     <ion-title>
       AudioPlayer
     </ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons>
       <ion-button (click)="dismissModal()" *ngIf="fromSongs">
-        <ion-icon name="close-circle-outline"></ion-icon>
+        <ion-icon name="close-circle-outline" color="dark"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  
   <!-- #d33939  -->
     <!-- <circle-progress
       [percent]="animation"
@@ -30,13 +31,12 @@
       [showInnerStroke]="false"
       [outerStrokeGradient]="true"
       [outerStrokeGradientStopColor]="'rgb(255,85,56)'"
-    ></circle-progress>
-    style="box-shadow: 0px 0px 34px 10px lightseagreen ;"
-   -->
-      <div style="padding: 0px;
-      margin-top: 1em;
-       width: 300px; margin-left: auto;
-       margin-right: auto; margin-top: 2em; margin-bottom: auto;">
+    ></circle-progress> -->
+    <!-- style="box-shadow: 0px 0px 34px 10px lightseagreen ;" -->
+  
+      <img [src]="AlbumImg" id="bg-img"
+        width="auto" height="auto" >
+      <div id="cover">
         <img [src]="AlbumImg" 
         width="auto" height="auto">
       </div>
@@ -80,13 +80,13 @@
       
       <ion-col size="12" class="ion-text-center">
         <ion-button color="light" fill="clear" (click)="skipB()" style="font-size: 1em;">
-          <ion-icon name="skip-backward" color="dark"></ion-icon>
+          <ion-icon name="play-skip-back-outline" color="dark"></ion-icon>
         </ion-button>
         <ion-button [disabled]="_loading" color="light"  fill="clear" (click)="togglePlayer()" style="font-size: 2em;">
           <ion-icon name="{{isPlaying? 'pause' : 'play'}}" color="dark"></ion-icon>
         </ion-button>
         <ion-button color="light"  fill="clear" (click)="skipF()" style="font-size: 1em;">
-          <ion-icon name="skip-forward" color="dark"></ion-icon>
+          <ion-icon name="play-skip-forward-outline" color="dark"></ion-icon>
         </ion-button>
       </ion-col>
 

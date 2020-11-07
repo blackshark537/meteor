@@ -7,8 +7,8 @@ import { throwError, Observable } from 'rxjs';
 })
 export class GlobalHttpService {
 
-  public readonly baseUrl = 'http://milenial.ddns.net:4200'; //server
-  // public readonly baseUrl = 'http://localhost:3000'; //local
+  //public readonly baseUrl = 'http://milenial.ddns.net:4200'; //server
+  public readonly baseUrl = 'http://localhost:3200'; //local
 
   constructor() { }
 
