@@ -1,3 +1,5 @@
+import { Form } from '@angular/forms';
+
 export interface GlobalResponseInterface{
     msg: string;
     docs?: any[];
@@ -8,6 +10,102 @@ export interface GlobalResponseInterface{
 /* 
  * ALBUM INTERFACES 
  */
+
+ export interface Album{
+    "id": 2,
+    "nombre": string;
+    "publicado"?: string;
+    "published_at"?: string;
+    "created_at"?: string;
+    "updated_at"?: string;
+    "canciones"?: Canciones;
+    "portada"?: Imagen[];
+    "genero"?: Categories[];
+    "artistas"?: Artist[];
+ }
+
+ export interface Artist{
+    "id": number;
+    "nombre": string;
+    "published_at": string;
+    "created_at": string;
+    "updated_at": string;
+    "imagen": Imagen;
+ }
+
+ interface Imagen{
+    "id": number;
+    "name": string;
+    "alternativeText": string;
+    "caption": string;
+    "width": number;
+    "height": number;
+    "formats": {
+        "thumbnail": Formats;
+        "large": Formats;
+        "medium": Formats;
+        "small": Formats;
+    };
+    "hash": string;
+    "ext": string;
+    "mime": string;
+    "size": 212.72,
+    "url": string;
+    "previewUrl": string;
+    "provider": string;
+    "provider_metadata": string;
+    "created_at": string;
+    "updated_at": string;
+}
+
+interface Formats{
+    "name": string;
+    "hash": string;
+    "ext": string;
+    "mime": string;
+    "width": string;
+    "height": string;
+    "size": number;
+    "path": string;
+    "url": string;
+}
+
+interface Canciones{
+        "id": number,
+        "name": string;
+        "url": string;
+        "nombre": string;
+        "file": FileInterface[];
+ }
+
+ export interface FileInterface{
+    "id": number;
+    "name": string;
+    "alternativeText": string;
+    "caption": string;
+    "width": number;
+    "height": number;
+    "formats": number;
+    "hash": string;
+    "ext": string;
+    "mime": string;
+    "size": number;
+    "url": string;
+    "previewUrl": string;
+    "provider": string;
+    "provider_metadata": string;
+    "created_at": string;
+    "updated_at": string;
+}
+
+ export interface Categories{
+    "id": number;
+    "nombre": string;
+    "published_at": string;
+    "created_at": string;
+    "updated_at": string;
+    "albums": Album[];
+ }
 
  interface TrackList{
      Name: string;
@@ -61,7 +159,7 @@ export interface TrackDto{
     Album: string;
     Artist: string;
     CopyRight?: boolean;
-}
+};
 
 export interface TrackInterface{
     _id?: string;
@@ -77,21 +175,4 @@ export interface TrackInterface{
     Created?: string;
     AlbumName?: string;
     ArtistName?: string;
-}
-
-/* 
- * Categories Interface 
- */
-export interface CategoryInteface{
-    _id?: string;
-    Name: string,
-    Albums: ALbumInterface[]
-    Created?: string;
-}
-
-export interface CategoryDto{
-    _id?: string;
-    Name: string,
-    Albums: string[];
-    Created?: string;
-}
+};

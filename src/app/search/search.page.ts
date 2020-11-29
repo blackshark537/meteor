@@ -6,7 +6,6 @@ import { MediaPlayerPage } from '../media-player/media-player.page';
 import { ALbumInterface, TrackInterface } from '../models/global.interface';
 import {Store} from '@ngrx/store';
 import {Set_AlbumImg} from '../actions/media.actions';
-import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-search',

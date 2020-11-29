@@ -1,20 +1,20 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/" color="dark"></ion-back-button>
+      <ion-back-button color="dark"></ion-back-button>
     </ion-buttons>
     <ion-title>
-      {{Album? Album.Name : 'Songs'}}
+      {{Album? Album.nombre : 'Songs'}}
     </ion-title>
   </ion-toolbar>
-  <ion-searchbar animated [(ngModel)]="search" (keydown)="searchTrack()"></ion-searchbar>
+  <ion-searchbar animated [(ngModel)]="search" debounce="500" (keydown)="searchTrack()"></ion-searchbar>
 </ion-header>
 
 <ion-content>
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-img style="height: 256px; width: auto; z-index: -1;" [src]="Album.Artist? Album.Artist.ImageUrl : '/assets/icon.png'">
+  <ion-img style="height: 256px; width: auto; z-index: -1;" [src]="Album.artistas[0]? url + Album.artistas[0].imagen[0].url : '/assets/icon.png'">
   </ion-img>
   <ion-fab-button color="tertiary"  class="fab-button-play" (click)="setTrackList(0)">
     <ion-icon name="play"></ion-icon>
@@ -25,35 +25,43 @@
     <ion-row>
       <ion-col size="12">
 
-        <div *ngIf="Album.TrackList.length === 0;" 
+        <div *ngIf="Album.canciones.file.length === 0;" 
         class="ion-text-center" style="position: absolute; top: 10em; left: 5em; right: 5em;">
           <ion-text>This Album is empty</ion-text>
         </div>
 
-        <ion-list *ngIf="Album.TrackList.length > 0;">
-
-          <div *ngFor="let track of TrackList; index as i">
-            <ion-item (click)="setTrackList(i)" button>
+        <ion-list *ngIf="Album && Album.canciones.file.length > 0;">
+          <div *ngFor="let track of TrackList; let i=index" >
+            <ion-item (click)="setTrackList(i)" button *ngIf="i<slice">
               <ion-thumbnail slot="start">
-                <ion-img [src]="Album.ImageUrl" ></ion-img>
+                <ion-img [src]="url + Album.portada[0].formats.thumbnail.url" ></ion-img>
               </ion-thumbnail>
               <ion-label>
-                <h5 class="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'danger marquee' : 'overfload dark'}}">
-                  <p>Track: {{activeTrack === (track.Name + ' - ' + track.ArtistName)? track.Name + ' - ' + track.ArtistName : track.Name | titlecase}} &nbsp;</p>
-                </h5>
+                <div class="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'danger marquee' : 'overfload dark'}}">
+                  <p>Track: {{i > 10? i : '0'+(i+1)}} {{ track.Name  | titlecase}} &nbsp;</p>
+                </div>
                 <p *ngIf="activeTrack === (track.Name + ' - ' + track.ArtistName)" style="margin-top: 17px;">Album: {{track.AlbumName}}</p>
                 <p *ngIf="activeTrack != (track.Name + ' - ' + track.ArtistName)">Artist: {{track.ArtistName}}</p>
               </ion-label>
               <ion-icon name="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'pause' : 'play'}}" slot="end"></ion-icon>
             </ion-item>
           </div>
-          
         </ion-list>
-        <ion-fab-button (click)="openModal()" class="fab-button" color="tertiary" >
-          <ion-icon name="arrow-up"></ion-icon>
-        </ion-fab-button>
+
+        <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+          <ion-infinite-scroll-content
+            loadingSpinner="bubbles"
+            loadingText="Loading more data...">
+          </ion-infinite-scroll-content>
+        </ion-infinite-scroll>
       </ion-col>
     </ion-row>
   </ion-grid>
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="openModal()" color="tertiary" >
+      <ion-icon name="arrow-up"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
 

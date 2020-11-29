@@ -2,16 +2,14 @@ import { TrackInterface } from './global.interface';
 
 export interface MPState{
     trackName: string;
+    AlbumImg: string;
+    currentTrack: number;
     loading: boolean;
-    progress: number;
-    duration: number;
-    albumImg: string;
-    trackIndex: number;
+    isPlaying: boolean;
     trackList: TrackInterface[];
-    playing: boolean;
-    pause: boolean;
-    play: boolean;
-    skipF: boolean;
-    skipB: boolean;
-    seek: number;
+    repeat: boolean;
+    shuffle: boolean;
+    MediaState?: any;
+    duration?: number;
+    currentTime?: number;
 }

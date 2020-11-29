@@ -1,6 +1,4 @@
 import { Component, OnDestroy } from '@angular/core';
-import { AudioplayerService } from '../services/audioplayer.service';
-import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tabs',
@@ -9,16 +7,12 @@ import { interval, Subscription } from 'rxjs';
 })
 export class TabsPage implements OnDestroy{
 
-  timing: Subscription;
-  playing: boolean = false;
-  constructor(
-    audioCtrl: AudioplayerService
-  ) {
+  constructor() {
 
   }
 
   ngOnDestroy(){
-    this.timing.unsubscribe();
+
   }
 
 }

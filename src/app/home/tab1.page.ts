@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../services/Api.service';
-import { CategoryInteface } from '../models/global.interface';
+import { Categories } from '../models/global.interface';
 import { ToastController } from '@ionic/angular';
+import { GlobalHttpService } from '../services/global.http.service';
+
 
 @Component({
   selector: 'app-tab1',
@@ -11,43 +13,32 @@ import { ToastController } from '@ionic/angular';
 export class Tab1Page implements OnInit {
 
   url: string = '';
-  categories: CategoryInteface[] = []
+  categories: Categories[] = []
 
   sliderConfig = {
     spaceBetween: 0,
     centeredSlides: false,
-    slidesPerView: 1.6
+    slidesPerView: 3
   };
 
   constructor(
-    private ApiService: ApiService,
-    private toastController: ToastController
+    public global: GlobalHttpService,
+    private ApiService: ApiService
   ) {
-    
+    this.url = global.baseUrl;
   }
 
   ngOnInit(){
-    /* this.checkWindow();
+    this.checkWindow();
     addEventListener('resize', (e)=>{
       e.preventDefault();
       this.checkWindow();
-    }) */
+    })
     
     this.ApiService.getCategories('').subscribe(resp =>{
-      this.categories = resp.docs;
-      this.categories.map(ctgry => {
-        ctgry.Albums.reverse();
-      });
-    }, error => this.presentToast(error));  
-  }
-
-  async presentToast(msg: string) {
-    const toast = await this.toastController.create({
-      message: msg,
-      duration: 2000
+      this.categories = resp;
     });
-    toast.present();
-  } 
+  }
 
   checkWindow(){
     if(window.screen.width < 600){
@@ -80,12 +71,12 @@ export class Tab1Page implements OnInit {
   doRefresh(event) {
     let categories = [];
     this.ApiService.getCategories('').subscribe(resp =>{
-      categories = resp.docs;
+      categories = resp;
       setTimeout(()=>{
         event.target.complete();
         this.categories = categories
       }, 2000)
-    }, error => this.presentToast(error));
+    });
   }
   
 

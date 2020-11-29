@@ -3,7 +3,7 @@ import { HttpClient} from '@angular/common/http';
 import { GlobalHttpService } from './global.http.service';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { GlobalResponseInterface } from '../models/global.interface';
+import { Album, Categories, GlobalResponseInterface } from '../models/global.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,13 +17,13 @@ export class ApiService {
     private globalHttp: GlobalHttpService
   ) { }
 
-  getCategories(name?: string): Observable<GlobalResponseInterface>{
-    return this.http.get<GlobalResponseInterface>(`${this.url}/category/q?name=${name}`)
+  getCategories(name?: string): Observable<Categories[]>{
+    return this.http.get<Categories[]>(`${this.url}/categories/`)
       .pipe(catchError(error => this.globalHttp.handelErrors(error)));
   }
 
-  getAlbum(id: string): Observable<GlobalResponseInterface>{
-    return this.http.get<GlobalResponseInterface>(`${this.url}/album/id=${id}`)
+  getAlbum(id: string): Observable<Album>{
+    return this.http.get<Album>(`${this.url}/albums/${id}`)
     .pipe( catchError(error => this.globalHttp.handelErrors(error)));
   }
 

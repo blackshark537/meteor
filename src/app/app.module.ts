@@ -13,9 +13,15 @@ import { AppComponent } from './app.component';
 // NGRX Modules
 import { StoreModule } from '@ngrx/store';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { EffectsModule } from '@ngrx/effects';
+
 import { environment } from 'src/environments/environment';
 
 import { MediaReducer } from './reducers/media.redux';
+import { Media } from '@ionic-native/media/ngx';
+import { MediaPlayerEffect } from './effects/mediaplayer.effect';
+import { MusicControlService } from './services/music-control.service';
+
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,12 +34,15 @@ import { MediaReducer } from './reducers/media.redux';
     StoreModule.forRoot({
       MediaState: MediaReducer
     }),
-    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production})
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production}),
+    EffectsModule.forRoot([MediaPlayerEffect])
   ],
   providers: [
     StatusBar,
     SplashScreen,
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
+    MusicControlService,
+    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    Media
   ],
   bootstrap: [AppComponent]
 })

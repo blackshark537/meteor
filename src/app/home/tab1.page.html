@@ -14,32 +14,29 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-grid class="ion-no-padding">
+  <ion-grid >
     <div *ngFor="let catgry of categories; index as i;">
 
       <ion-row>
         <ion-col size="12">
-            <ion-label class="ion-text-center">
-              <h2>
-                {{catgry.Name}}
-                <!-- <ion-badge color="danger" style="box-shadow: 0px 3px 9px rgb(255, 69, 69);">
-                  {{catgry.Albums.length}}
-                </ion-badge> -->
-              </h2>
-              <p>Albums: {{catgry.Albums.length}}</p>
-            </ion-label>
+            <ion-list-header>
+              <ion-label>
+                {{catgry.nombre}}
+                <p>Albums: {{catgry.albums.length}}</p>
+              </ion-label>
+            </ion-list-header>
         </ion-col>
       </ion-row>
 
       <ion-slides [options]="sliderConfig">
-        <ion-slide *ngFor="let album of catgry.Albums">
+        <ion-slide *ngFor="let album of catgry.albums">
           
-          <ion-card [routerLink]="['/songs', album._id]" style="max-height: 23.5em;">
-            <img [src]="album.ImageUrl" style="width: 200px; height: 200px;" alt="cover">
+          <ion-card [routerLink]="['/songs', album.id]" style="max-height: 23.5em;">
+            <img [src]="url + album.portada[0].formats.small.url" style="width: 200px; height: 200px;" alt="cover">
             <ion-text color="dark">
-              <h4>{{album.Name.length >16? album.Name.slice(0,14) + '...' : album.Name}}</h4>
+              <h4>{{album.nombre.length >16? album.nombre.slice(0,14) + '...' : album.nombre}}</h4>
             </ion-text>
-            <small>{{album.releaseDate}}</small>
+            <small>{{album.publicado}}</small>
           </ion-card>
         
         </ion-slide>

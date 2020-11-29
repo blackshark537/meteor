@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ApiService } from '../services/Api.service';
-import { ALbumInterface, TrackInterface } from '../models/global.interface';
+import { Album, FileInterface, TrackInterface } from '../models/global.interface';
 import { ActivatedRoute } from '@angular/router';
-import { ToastController, ModalController } from '@ionic/angular'
+import { ToastController, ModalController, Platform } from '@ionic/angular'
 import { MediaPlayerPage } from '../media-player/media-player.page';
-import { AudioplayerService } from '../services/audioplayer.service';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
 import * as _Actions from '../actions/media.actions';
+import { GlobalHttpService } from '../services/global.http.service';
+import { MPState } from '../models/mp.state';
 
 @Component({
   selector: 'app-songs',
@@ -16,68 +17,101 @@ import * as _Actions from '../actions/media.actions';
 })
 export class SongsPage implements OnInit, OnDestroy {
 
-  Album: ALbumInterface = {
-    Artist: '',
-    ImageUrl: 'assets/icon.png',
-    Name: '',
-    TrackList: [],
-    releaseDate: ''
+  url = '';
+  slice = 10;
+  Album: Album = {
+    id: null,
+    nombre: '',
+    artistas: [],
+    canciones:{
+      file: [],
+      id: null,
+      name: null,
+      nombre: null,
+      url: ''
+    }
   };
-  TrackList: TrackInterface[];
+  TrackList: TrackInterface[] = [];
+  Canciones: FileInterface[];
   activeTrack: string;
   search: string = '';
-  timer;
 
   constructor(
+    private global: GlobalHttpService,
     private albumService: ApiService,
     private activeRoute: ActivatedRoute,
-    private toastController: ToastController,
     private modalController: ModalController,
-    public audioCtrl: AudioplayerService,
     private store: Store<AppState>
-  ) { }
+  ) { 
+    this.url = global.baseUrl;
+  }
 
   ngOnInit() {
     this.activeTrack = null;
 
-    this.store.select('MediaState').subscribe((vals: AppState) =>{
-        this.activeTrack = vals.trackName;
-        window.document.title = vals.trackName;
+    this.store.select('MediaState').subscribe(state =>{
+        this.activeTrack = state.trackName;
+        window.document.title = state.trackName;
     });
 
     const id = this.activeRoute.snapshot.paramMap.get('id');
     this.albumService.getAlbum(id).subscribe(resp => {
-      this.Album = resp.doc;
-      this.TrackList = this.Album.TrackList;
-    }, error => this.presentToast(error));
+      this.Album = resp;
+      this.Album.canciones.file.forEach((track, index )=>{
+        this.TrackList.push({
+          Name: track.name,
+          TrackUrl: this.url+track.url,
+          ArtistName: this.Album.artistas[0].nombre,
+          AlbumName: this.Album.nombre,
+          TrackNumber: track.id,
+          Duration: track.size,
+          ImageUrl: this.url+this.Album.portada[0].formats.small.url
+        });
+      });
+    });
   }
 
   ngOnDestroy(){
-    clearInterval(this.timer);
+    this.modalController.dismiss();
   }
 
   setTrackList(index: number){
-    this.audioCtrl.setTrackList(this.TrackList, index);
-    //modified, using storageService instead of localstorage
-    //this.storage.setAlbumImg(this.Album.ImageUrl);
-    this.store.dispatch(_Actions.Set_AlbumImg({AlbumImg: this.Album.ImageUrl}));
+    this.store.dispatch(_Actions.set_TrackList({trackList: this.TrackList, index}));
+    this.store.dispatch(_Actions.Set_AlbumImg({AlbumImg: this.url + this.Album.portada[0].url}));
     this.openModal();
   }
 
+  loadData(evt){
+    setTimeout(() => {
+      this.slice += 10;
+      evt.target.complete();
+      // App logic to determine if all data is loaded
+      // and disable the infinite scroll
+      if (this.slice == this.TrackList.length) {
+        evt.target.disabled = true;
+      }
+    }, 500);
+  }
+
   async searchTrack(){
-    this.TrackList = this.Album.TrackList.filter((val)=>{
-      return val.Name.toLowerCase().match(this.search.toLowerCase()) || val.Name.toLowerCase().includes(this.search.toLowerCase());
+    this.TrackList = [];
+    let canciones = this.Album.canciones.file.filter((track)=>{
+      return track.name.toLowerCase().match(this.search.toLowerCase()) || track.name.toLowerCase().includes(this.search.toLowerCase());
+    });
+    canciones.forEach(track =>{
+      this.TrackList.push({
+        Name: track.name,
+        TrackUrl: this.url+track.url,
+        ArtistName: this.Album.artistas[0].nombre,
+        AlbumName: this.Album.nombre,
+        TrackNumber: track.id,
+        Duration: track.size,
+        ImageUrl: this.url+this.Album.portada[0].formats.small.url
+      })
     });
   }
 
-  async presentToast(msg: string) {
-    const toast = await this.toastController.create({
-      message: msg,
-      duration: 2000
-    });
-    toast.present();
-  }
-
+  //Open the media player page
   async openModal(){
     const modal = await this.modalController.create({
       component: MediaPlayerPage,
@@ -91,19 +125,16 @@ export class SongsPage implements OnInit, OnDestroy {
         fromSongs: true
       }
     });
-    //localStorage.setItem('Album', JSON.stringify(this.Album));
-    modal.present();
+    await modal.present();
   }
 
   doRefresh(event) {
-    let album;
     const id = this.activeRoute.snapshot.paramMap.get('id');
     this.albumService.getAlbum(id).subscribe(resp => {
-      album = resp.doc;
       setTimeout(()=>{
         event.target.complete();
-        this.Album = album;
+        this.Album = resp;
       },2000);
-    }, error => this.presentToast(error));
+    });
   }
 }

@@ -1,13 +1,5 @@
-import { TrackInterface } from './global.interface';
+import { MPState } from './mp.state';
 
 export interface AppState{
-    trackName: string;
-    AlbumImg: string;
-    currentTrack: number;
-    loading: boolean;
-    isPlaying: boolean;
-    trackList: TrackInterface[];
-    repeat: boolean;
-    shuffle: boolean;
-    MediaState?: any;
+    MediaState?: MPState;
 }

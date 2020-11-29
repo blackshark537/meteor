@@ -7,54 +7,5 @@
 </ion-header>
 
 <ion-content >
-  <!-- #d33939 -->
-    <circle-progress
-    [percent]="percent"
-    [maxPercent]="100"
-    [radius]="100"
-    [showTitle]="false"
-    [showSubtitle]="false"
-    [showUnits]="false"
-    [outerStrokeWidth]="4"
-    [outerStrokeColor]="'rgb(255, 153, 136)'"
-    [showImage]="true"
-    [imageSrc]="'assets/icon.png'"
-    [imageHeight]="100"
-    [imageWidth]="100"
-    [showZeroOuterStroke]="false"
-    [showInnerStroke]="false"
-    [outerStrokeGradient]="true"
-    [outerStrokeGradientStopColor]="'rgb(255,85,56)'"
-  ></circle-progress>
 
 </ion-content>
-
-<ion-footer>
-  <ion-toolbar>
-    <ion-row>
-      
-      <ion-col size="12" class="ion-text-center">
-          <ion-label>Track Name</ion-label>
-      </ion-col>
-      
-      <ion-col size="12">
-        <ion-range min="0" max="100" dualKnobs="false" pin="true" snaps="false" step="3" ticks="false" [value]="percent"
-          color="danger">
-        </ion-range>
-      </ion-col>
-
-      <ion-col size="12" class="ion-text-center">
-        <ion-button color="light" fill="clear" style="font-size: 1em;">
-          <ion-icon name="play-skip-back-circle-outline" color="dark"></ion-icon>
-        </ion-button>
-        <ion-button color="light"  fill="clear" (click)="play()" style="font-size: 2em;">
-          <ion-icon name="{{isPlaying? 'pause' : 'play'}}" color="dark"></ion-icon>
-        </ion-button>
-        <ion-button color="light"  fill="clear" style="font-size: 1em;">
-          <ion-icon name="play-skip-forward-circle-outline" color="dark"></ion-icon>
-        </ion-button>
-      </ion-col>
-
-    </ion-row>
-  </ion-toolbar>
-</ion-footer>

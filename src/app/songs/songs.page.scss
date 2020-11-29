@@ -16,6 +16,7 @@
   white-space: nowrap;
   overflow: hidden;
   position: absolute;
+  width: 60%;
 }
 
 .danger{
@@ -34,7 +35,7 @@ h5{
 .marquee p {
   display: inline-block;
   padding-left: 100%;
-  font-size: 1.1em;
+  /* font-size: 1.1em; */
   animation: marquee 5s linear infinite;
 }
 
@@ -44,7 +45,7 @@ h5{
 
 @keyframes marquee {
   0% {
-    transform: translate(0, 0);
+    transform: translate(100, 0);
   }
   100% {
     transform: translate(-100%, 0);

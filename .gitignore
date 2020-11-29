@@ -17,6 +17,7 @@ $RECYCLE.BIN/
 log.txt
 npm-debug.log*
 deploy.sh
+www.rar
 
 /.idea
 /.ionic
@@ -32,4 +33,3 @@ deploy.sh
 /www
 /electron
 /android
-/www.rar

@@ -1,46 +1,21 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      AudioPlayer
+      MediaPlayer
     </ion-title>
     <ion-buttons>
       <ion-button (click)="dismissModal()" *ngIf="fromSongs">
-        <ion-icon name="close-circle-outline" color="dark"></ion-icon>
+        <ion-icon color="dark" name="caret-down-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
+  <div style="margin-top: 2em;">
+    <img [src]="state.AlbumImg" id="bg-img">
+  </div>
+  <div id="cover">
+    <img [src]="state.AlbumImg" id="cover-img">
+  </div>
 </ion-header>
-
-<ion-content>
-  
-  <!-- #d33939  -->
-    <!-- <circle-progress
-      [percent]="animation"
-      [maxPercent]="100"
-      [radius]="100"
-      [showTitle]="false"
-      [showSubtitle]="false"
-      [showUnits]="false"
-      [outerStrokeWidth]="4"
-      [outerStrokeColor]="'rgb(255, 153, 136)'"
-      [showImage]="true"
-      [imageSrc]="AlbumImg"
-      [imageHeight]="100"
-      [imageWidth]="100"
-      [showZeroOuterStroke]="false"
-      [showInnerStroke]="false"
-      [outerStrokeGradient]="true"
-      [outerStrokeGradientStopColor]="'rgb(255,85,56)'"
-    ></circle-progress> -->
-    <!-- style="box-shadow: 0px 0px 34px 10px lightseagreen ;" -->
-  
-      <img [src]="AlbumImg" id="bg-img"
-        width="auto" height="auto" >
-      <div id="cover">
-        <img [src]="AlbumImg" 
-        width="auto" height="auto">
-      </div>
-</ion-content>
 
 <ion-footer>
   <ion-toolbar>
@@ -48,14 +23,14 @@
 
       <ion-col size="12" class="ion-text-center">
         <ion-label>
-          <ion-text>{{TrackName}}</ion-text>
+          <ion-text>{{state.trackName}}</ion-text>
         </ion-label>
       </ion-col>
       
       <ion-col size="12" >
         
         <ion-range 
-        *ngIf="!_loading;else elseBlock;"
+        *ngIf="!state.loading;else elseBlock;"
         min="0" 
         [max]="duration" 
         (touchend)="seek($event.target.value)" 
@@ -80,13 +55,13 @@
       
       <ion-col size="12" class="ion-text-center">
         <ion-button color="light" fill="clear" (click)="skipB()" style="font-size: 1em;">
-          <ion-icon name="play-skip-back-outline" color="dark"></ion-icon>
+          <ion-icon name="play-skip-back-sharp" color="dark"></ion-icon>
         </ion-button>
-        <ion-button [disabled]="_loading" color="light"  fill="clear" (click)="togglePlayer()" style="font-size: 2em;">
-          <ion-icon name="{{isPlaying? 'pause' : 'play'}}" color="dark"></ion-icon>
+        <ion-button [disabled]="state.loading" color="light"  fill="clear" (click)="togglePlayer()" style="font-size: 2em;">
+          <ion-icon name="{{state.isPlaying? 'pause' : 'play'}}" color="dark"></ion-icon>
         </ion-button>
         <ion-button color="light"  fill="clear" (click)="skipF()" style="font-size: 1em;">
-          <ion-icon name="play-skip-forward-outline" color="dark"></ion-icon>
+          <ion-icon name="play-skip-forward-sharp" color="dark"></ion-icon>
         </ion-button>
       </ion-col>
 
@@ -100,14 +75,14 @@
       </ion-col>
 
       <ion-col size="3" class="ion-text-center">
-        <ion-button color="{{_repeat? 'dark' : 'light'}}" fill="clear" (click)="repeat()" style="font-size: 1em;">
+        <ion-button color="{{state.repeat? 'dark' : 'light'}}" fill="clear" (click)="repeat()" style="font-size: 1em;">
           <ion-icon name="repeat"></ion-icon>
-          <div *ngIf="_repeat" style="position: absolute; top: 1px; right: 10px;">1</div>
+          <div *ngIf="state.repeat" style="position: absolute; top: 1px; right: 10px;">1</div>
         </ion-button>
       </ion-col>
 
       <ion-col size="3" class="ion-text-center">
-        <ion-button color="{{_shuffle? 'dark' : 'light'}}" fill="clear" (click)="shuffle()" style="font-size: 1em;">
+        <ion-button color="{{state.shuffle? 'dark' : 'light'}}" fill="clear" (click)="shuffle()" style="font-size: 1em;">
           <ion-icon name="shuffle"></ion-icon>
         </ion-button>
       </ion-col>

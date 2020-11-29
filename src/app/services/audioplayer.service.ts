@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { TrackInterface } from '../models/global.interface';
 import { Store } from '@ngrx/store';
-import { loading, Set_TrackName, Set_CurrentTrack, Set_TrackList, isPlaying } from '../actions/media.actions'
+import * as _Actions from '../actions/media.actions'
 import { AppState} from '../models/app.state';
-import { Observable } from 'rxjs';
+import { MPState } from '../models/mp.state';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class AudioplayerService {
 
   private mediaplayer = new Audio();
-  private volume = 1;
-  private state$: Observable<AppState> = this.store.select('MediaState');
-  private state: AppState;
+  private volume = 0.7;
+  private state: MPState;
   private trackList: TrackInterface[];
   private i: number;
 
@@ -24,25 +24,26 @@ export class AudioplayerService {
   constructor(
     private store: Store<AppState>
   ) { 
+    store.select('MediaState').subscribe(state =>{
+       this.state = state
+    });
   }
 
   async setTrackList(trackList: TrackInterface[], index: number){
-    //clearInterval(this.timer);
-    await this.state$.subscribe(stado => this.state = stado);
+
     this.trackList = trackList;
     this.i = index;
     let trackName = this.trackList[this.i].ArtistName? 
     this.trackList[this.i].Name + ' - '+ this.trackList[this.i].ArtistName 
     : this.trackList[this.i].Name;
-    await this.store.dispatch(isPlaying({isPlaying: false}));
-    await this.store.dispatch(Set_TrackName({trackName: trackName}));
-    await this.store.dispatch(Set_CurrentTrack({currentTrack: index}));
-    await this.store.dispatch(Set_TrackList({TrackList: trackList}));
+    await this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
+    await this.store.dispatch(_Actions.Set_TrackName({trackName: trackName}));
+    await this.store.dispatch(_Actions.Set_CurrentTrack({currentTrack: index}));
     await this.play(trackList[this.i]);
   }
 
   getActiveTrack(): TrackInterface{
-    return this.trackList[this.i];
+    return this.state.trackList[this.i];
   }
 
   setSrc(url: string){
@@ -56,45 +57,40 @@ export class AudioplayerService {
   }
 
   play(track: TrackInterface): Promise<boolean>{
-    return new Promise((solve, rej)=>{
-      try{
-        if(this.mediaplayer.canPlayType('audio/mpeg')){
-          //this.mediaplayer.mediaGroup = track.Name;
-          this.mediaplayer.currentTime = 0;
-          this.mediaplayer.src = track.TrackUrl;
-          this.mediaplayer.volume = this.volume;
-          this.mediaplayer.play();
-          this.mediaplayer.onloadstart = ()=>{
-            this.store.dispatch(loading({loading: true}));
+        return new Promise((solve, rej)=>{
+        try{
+          if(this.mediaplayer.canPlayType('audio/mpeg')){
+            this.mediaplayer.currentTime = 0;
+            this.mediaplayer.src = track.TrackUrl;
+            this.mediaplayer.volume = this.volume;
+            this.mediaplayer.play();
+            this.mediaplayer.onloadstart = ()=>{
+              this.store.dispatch(_Actions.loading({loading: true}));
+            }
+  
+            this.mediaplayer.onloadeddata = ()=>{
+              this.store.dispatch(_Actions.loading({loading: false}));
+            }
+            
+            this.mediaplayer.ontimeupdate = () =>{
+              this.store.dispatch(_Actions.get_duration());
+              this.store.dispatch(_Actions.get_current_time());
+            }
+
+            this.mediaplayer.onended = ()=> this.skipForward();
+
+            this.mediaplayer.onplay = ev =>{
+              this.store.dispatch(_Actions.isPlaying({isPlaying: ev.returnValue}));
+              solve(ev.returnValue);
+            };
+          } else {
+            this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
+            rej("Can't play audio/mpeg");
           }
-
-          this.mediaplayer.onloadeddata = ()=>{
-            this.store.dispatch(loading({loading: false}));
-          }
-
-          this.mediaplayer.onended = ()=> this.skipForward();
-
-          this.mediaplayer.onplay = ev =>{
-            this.store.dispatch(isPlaying({isPlaying: ev.returnValue}));
-            solve(ev.returnValue);
-          };
-/*           this.mediaplayer.ontimeupdate = (ev)=>{  // download onprogresss 
-            ev.preventDefault();
-            console.log('time: ', this.mediaplayer.currentTime);
-          } */
-
-          /* 
-          this.mediaplayer.onsuspend = ev => console.log(ev.type);
-          this.mediaplayer.onabort = ev => console.log(ev.type);
-           */
-        } else {
-          this.store.dispatch(isPlaying({isPlaying: false}));
-          rej("Can't play audio/mpeg");
+        } catch(error){
+          rej(error);
         }
-      } catch(error){
-        rej(error);
-      }
-    })
+    });
   }
 
   getMediaGroup(): string{
@@ -107,7 +103,7 @@ export class AudioplayerService {
 
   setVolume(volume: number){
     this.volume = volume;
-    this.mediaplayer.volume = this.volume;
+    this.mediaplayer.volume = volume;
   }
 
   getVolume(): number{
@@ -116,12 +112,11 @@ export class AudioplayerService {
 
   pause(){
     this.mediaplayer.pause();
-    this.store.dispatch(isPlaying({isPlaying: false}));
+    this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
   }
 
   resume(){
     this.mediaplayer.play();
-    this.store.dispatch(isPlaying({isPlaying: true}));
   }
 
   stop(){
@@ -150,7 +145,9 @@ export class AudioplayerService {
   }
 
   skipBackward(){
+    //if(this.platform.is('hybrid')) this.file.release();
     if(this.getCurrentTime() > 2){
+      //if(this.platform.is('hybrid')) this.setCurrentTime_native(0);
       this.setCurrentTime(0);
     }else{
       if(this.trackList && this.i > 0){
