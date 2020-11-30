@@ -21,7 +21,13 @@ const mediaReducer = createReducer(load_state,
         on(actions.Set_AlbumImg, (state, {AlbumImg}) => ({...state, AlbumImg})),
         on(actions.Set_CurrentTrack, (state, {currentTrack}) =>({...state, currentTrack})),
         on(actions.Set_TrackName, (state, {trackName})=> ({...state, trackName})),
-        on(actions.isPlaying, (state, {isPlaying}) => ({...state, isPlaying})),
+        on(actions.isPlaying, (state, {isPlaying}) => {
+            let new_state = {...state};
+            new_state.loading = false;
+            new_state.isPlaying = isPlaying;
+            console.log('playing...', isPlaying);
+            return new_state;
+        }),
         on(actions.repeat, (state, {repeat}) => ({...state, repeat})),
         on(actions.shuffle, (state, {shuffle}) => ({...state, shuffle})),
         on(actions.loading, (state, {loading})=>({...state, loading})),

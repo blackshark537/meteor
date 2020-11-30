@@ -2,11 +2,9 @@ import { Injectable } from '@angular/core';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { AudioplayerService } from '../services/audioplayer.service';
 import * as playerActions from '../actions/media.actions';
-import { of } from 'rxjs';
-import { map, tap, mergeMap, catchError, exhaustMap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
-import { MusicControlService } from '../services/music-control.service';
 import { Platform } from '@ionic/angular';
 import { NativeAudiopalyerService } from '../services/native-audiopalyer.service';
 
@@ -17,7 +15,7 @@ export class MediaPlayerEffect {
         () => this.actions.pipe(
             ofType(playerActions.resume),
             tap(() =>{ 
-                if(this.platform.is('hybrid')){
+                if(this.hybrid){
                     this.nativeAudioPlayer.resume_native();
                 } else {
                     this.audioPlayer.resume();
@@ -30,7 +28,7 @@ export class MediaPlayerEffect {
         () => this.actions.pipe(
             ofType(playerActions.pause),
             tap(() =>{
-                if(this.platform.is('hybrid')){
+                if(this.hybrid){
                     this.nativeAudioPlayer.pause_native();
                 } else {
                     this.audioPlayer.pause();
@@ -43,7 +41,8 @@ export class MediaPlayerEffect {
         () => this.actions.pipe(
             ofType(playerActions.skip_fwrd),
             tap(() => {
-                if(this.platform.is('hybrid')){
+                if(this.hybrid){
+                    this.nativeAudioPlayer.stop_native();
                     this.nativeAudioPlayer.skipForward();
                 } else {
                     this.audioPlayer.skipForward();
@@ -55,7 +54,8 @@ export class MediaPlayerEffect {
         () => this.actions.pipe(
             ofType(playerActions.skip_bkwrd),
             tap(() => {
-                if(this.platform.is('hybrid')){
+                if(this.hybrid){
+                    this.nativeAudioPlayer.stop_native();
                     this.nativeAudioPlayer.skipBackward();
                 } else {
                     this.audioPlayer.skipBackward();
@@ -67,7 +67,7 @@ export class MediaPlayerEffect {
         ()=> this.actions.pipe(
             ofType(playerActions.seek),
             tap(payload => {
-                if(this.platform.is('hybrid')){
+                if(this.hybrid){
                     this.nativeAudioPlayer.setCurrentTime(payload.time)
                 } else {
                     this.audioPlayer.setCurrentTime(payload.time)
@@ -79,7 +79,7 @@ export class MediaPlayerEffect {
         ()=> this.actions.pipe(
             ofType(playerActions.get_duration),
             tap(_=> {
-                if(this.platform.is('hybrid')){
+                if(this.hybrid){
                     this.store.dispatch( playerActions.set_duration({duration: this.nativeAudioPlayer.getDuration()}));
                 } else {
                     this.store.dispatch( playerActions.set_duration({duration: this.audioPlayer.getDuration()}));
@@ -91,7 +91,7 @@ export class MediaPlayerEffect {
         ()=> this.actions.pipe(
             ofType(playerActions.get_duration),
             tap(async _=>{
-                if(this.platform.is('hybrid')){
+                if(this.hybrid){
                     this.store.dispatch( playerActions.set_current_time({currentTime: await this.nativeAudioPlayer.getCurrentTime()}))
                 } else {
                     this.store.dispatch( playerActions.set_current_time({currentTime: this.audioPlayer.getCurrentTime()}))
@@ -103,12 +103,8 @@ export class MediaPlayerEffect {
         () => this.actions.pipe(
             ofType(playerActions.set_TrackList),
             tap(({trackList, index}) => {
-                let track = trackList[index];
-                let hasPrev = index > 0? true : false;
-                let hasNext = index < trackList.length-1? true : false;
-                if(this.platform.is('hybrid')){
-                     this.audioControls.create(track, hasPrev, hasNext);
-                     this.nativeAudioPlayer.setTrackList(trackList, index);
+                if(this.hybrid){
+                    this.nativeAudioPlayer.setTrackList(trackList, index);
                 } else {
                     this.audioPlayer.setTrackList(trackList, index);
                 }
@@ -120,7 +116,11 @@ export class MediaPlayerEffect {
         private store: Store<AppState>,
         private audioPlayer: AudioplayerService,
         private nativeAudioPlayer: NativeAudiopalyerService,
-        private audioControls: MusicControlService,
         private platform: Platform
     ){ }
+
+    get hybrid(){
+        return this.platform.is('hybrid');
+        //return false;
+    }
 }

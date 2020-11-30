@@ -68,11 +68,10 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
     if(this.state.isPlaying){
       this.store.dispatch(_Actions.pause());
     } else {
-      if(this.state.trackList.length != 0 && !this.fromSongs){
+      /* if(this.state.trackList.length != 0 && !this.fromSongs){
         this.store.dispatch(_Actions.set_TrackList({trackList: this.state.trackList, index: this.state.currentTrack}));
-      } else {
+      } else { }*/ 
         this.store.dispatch(_Actions.resume());
-      }
     }
   }
 

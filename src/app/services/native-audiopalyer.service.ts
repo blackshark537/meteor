@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Media, MediaObject} from '@ionic-native/media/ngx';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
-import { loading, Set_TrackName, Set_CurrentTrack, set_TrackList, isPlaying } from '../actions/media.actions'
+import * as _Actions from '../actions/media.actions'
 import { TrackInterface } from '../models/global.interface';
-import { Observable } from 'rxjs';
-import { MusicControlService } from './music-control.service';
 import { MPState } from '../models/mp.state';
+import { MusicControlService } from './music-control.service';
+import { interval, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -28,15 +28,18 @@ export class NativeAudiopalyerService {
   position;
   display_duration;
   display_position;
-  _isPlaying = false;
+  timer: Subscription;
+
   private state: MPState;
   
   constructor(
     private store: Store<AppState>,
     private media: Media,
+    private audioControls: MusicControlService
   ) { 
     store.select('MediaState').subscribe(state =>{
       this.state = state
+      if(state.currentTime > 10 && state.currentTime == state.duration) this.skipForward();
     });
   }
 
@@ -47,30 +50,43 @@ export class NativeAudiopalyerService {
     let trackName = this.trackList[this.i].ArtistName? 
     this.trackList[this.i].Name + ' - '+ this.trackList[this.i].ArtistName 
     : this.trackList[this.i].Name;
-    await this.store.dispatch(isPlaying({isPlaying: false}));
-    await this.store.dispatch(Set_TrackName({trackName: trackName}));
-    await this.store.dispatch(Set_CurrentTrack({currentTrack: index}));
-    await this.play_native(trackList[this.i]);
+    await this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
+    await this.store.dispatch(_Actions.Set_TrackName({trackName: trackName}));
+    await this.store.dispatch(_Actions.Set_CurrentTrack({currentTrack: index}));
+    if(this.file) await this.stop_native();
+    setTimeout( async _=>{
+      let track = trackList[this.i];
+      let hasPrev = this.i > 0? true : false;
+      let hasNext = this.i < trackList.length-1? true : false;
+      this.audioControls.create(track, hasPrev, hasNext);
+      await this.play_native(trackList[this.i]);
 
-    this.file.onStatusUpdate.subscribe(status => {
-      switch (status) {
-        case 1: // 1. Starting
-          break;
-        case 2:   // 2: playings
-        this._isPlaying = true;
-        this.store.dispatch(isPlaying({isPlaying: true}));
-          break;
-        case 3:   // 3: pause
-        this._isPlaying = false;
-        this.store.dispatch(isPlaying({isPlaying: false}));
-          break;
-        case 4:   // 4: stop
-        default:
-          this._isPlaying = false;
-          this.store.dispatch(isPlaying({isPlaying: false}));
-          break;
-      }
-    });
+      console.log(`track ${this.i}, name: ${trackName}`);
+
+      this.file.onStatusUpdate.subscribe(status => {
+        switch (status) {
+          case 1: // 1. Starting
+            console.log('starting...')
+            this.store.dispatch(_Actions.loading({loading: true}));
+            break;
+          case 2:   // 2: playing
+            console.log('playing...')
+            this.store.dispatch(_Actions.isPlaying({isPlaying: true}));
+            break;
+          case 3:   // 3: pause
+            console.log('pause...')
+            this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
+            break;
+          case 4:   // 4: stop
+          default:
+            console.log('stop...')
+            this.file.release();
+            this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
+            this.timer.unsubscribe();
+            break;
+        }
+      });
+    },500);
   }
 
   mute(){
@@ -78,15 +94,16 @@ export class NativeAudiopalyerService {
   }
 
   play_native(track: TrackInterface){
-    if(this._isPlaying){
-      this.stop_native();
-    }
     this.file = this.media.create(track.TrackUrl);
-    this.getDuration_native();
+    this.file.play();
+    this.timer = interval(300).subscribe(_=>{
+      this.store.dispatch(_Actions.get_duration());
+      this.store.dispatch(_Actions.get_current_time());
+    });
   }
 
-  setCurrentTime_native(time: number){
-    this.file.seekTo(time);
+  setCurrentTime(milis: number){
+    this.file.seekTo(milis);
   }
 
   pause_native(){
@@ -97,13 +114,16 @@ export class NativeAudiopalyerService {
     this.file.play();
   }
 
-  stop_native(){
-    this.file.stop();
-    this.file.release();
+  async stop_native(){
+    await this.file.stop();
+    await this.file.release();
+    this.file = undefined;
   }
 
   async getCurrentTime_native(): Promise<{position: number}>{
-    return await this.file.getCurrentPosition();
+    let x = await this.file.getCurrentPosition();
+    console.log('current Pos: ', x);
+    return x;
   }
 
   getDuration_native(){
@@ -158,10 +178,6 @@ export class NativeAudiopalyerService {
     return duration;
   }
 
-  setCurrentTime(time: number){
-    this.file.seekTo(time);
-  }
-
   getAndSetCurrentAudioPosition() {
     const diff = 1;
     const self = this;
@@ -213,15 +229,14 @@ export class NativeAudiopalyerService {
   }
 
   async skipBackward(){
-    const time = await this.getCurrentTime();
-    if( time > 2){
-      this.setCurrentTime_native(0);
-    }else{
       if(this.trackList && this.i > 0){
         this.i--;
         this.setTrackList(this.trackList, this.i);
       }
-    }
   }
+
+
+
+
 
 }

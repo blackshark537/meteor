@@ -4,7 +4,6 @@ import { Plugins } from '@capacitor/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
 import * as _Actions from '../actions/media.actions';
-import { Platform } from '@ionic/angular';
 
 const { CapacitorMusicControls } = Plugins;
 
@@ -29,16 +28,16 @@ export class MusicControlService {
       dismissable: true,                         // optional, default : false
 
       // hide previous/next/close buttons:
-      hasPrev: _hasPrev,    // show previous button, optional, default: true
-      hasNext: _hasNext,      // show next button, optional, default: true
+      hasPrev: false,    // show previous button, optional, default: true
+      hasNext: false,      // show next button, optional, default: true
       hasClose: true,       // show close button, optional, default: false
 
       // iOS only, optional
       album: Track.AlbumName,     // optional, default: ''
       duration: 60, // optional, default: 0
       elapsed: 10, // optional, default: 0
-      hasSkipForward: true,  // show skip forward button, optional, default: false
-      hasSkipBackward: true, // show skip backward button, optional, default: false
+      hasSkipForward: false,  // show skip forward button, optional, default: false
+      hasSkipBackward: false, // show skip backward button, optional, default: false
       skipForwardInterval: 15, // display number for skip forward, optional, default: 0
       skipBackwardInterval: 15, // display number for skip backward, optional, default: 0
       hasScrubbing: false, // enable scrubbing from control center and lockscreen progress bar, optional
@@ -71,6 +70,10 @@ export class MusicControlService {
       isPlaying: value, // affects Android only
       //elapsed: timeElapsed // affects iOS Only
     });
+  }
+
+  dismiss(){
+    if(CapacitorMusicControls) CapacitorMusicControls.destroy();
   }
 
   handleControlsEvent(action){
