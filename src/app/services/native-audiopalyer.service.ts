@@ -38,8 +38,7 @@ export class NativeAudiopalyerService {
     private audioControls: MusicControlService
   ) { 
     store.select('MediaState').subscribe(state =>{
-      this.state = state
-      if(state.currentTime > 10 && state.currentTime == state.duration) this.skipForward();
+      this.state = state;
     });
   }
 
@@ -83,6 +82,7 @@ export class NativeAudiopalyerService {
             this.file.release();
             this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
             this.timer.unsubscribe();
+            if(this.state.currentTime > 10 && this.state.currentTime == this.state.duration) this.skipForward();
             break;
         }
       });
@@ -117,7 +117,6 @@ export class NativeAudiopalyerService {
   async stop_native(){
     await this.file.stop();
     await this.file.release();
-    this.file = undefined;
   }
 
   async getCurrentTime_native(): Promise<{position: number}>{
