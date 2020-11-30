@@ -82,7 +82,7 @@ export class NativeAudiopalyerService {
             this.file.release();
             this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
             this.timer.unsubscribe();
-            if(this.state.currentTime > 10 && this.state.currentTime == this.state.duration) this.skipForward();
+            if(this.state.currentTime > 10 && Math.floor(this.state.currentTime) === Math.floor(this.state.duration)) this.skipForward();
             break;
         }
       });
@@ -119,47 +119,6 @@ export class NativeAudiopalyerService {
     await this.file.release();
   }
 
-  async getCurrentTime_native(): Promise<{position: number}>{
-    let x = await this.file.getCurrentPosition();
-    console.log('current Pos: ', x);
-    return x;
-  }
-
-  getDuration_native(){
-    this.file = this.media.create(this.trackList[this.i].TrackUrl);
-    // On occassions, the plugin only gives duration of the file if the file is played
-    // at least once
-    this.file.play();
-    this.mute();  // you don't want users to notice that you are playing the file
-    const self = this;
-    // The plugin does not give the correct duration on playback start
-    // need to check for duration repeatedly
-    let temp_duration = self.duration;
-    this.get_duration_interval = setInterval(() => {
-      if (self.duration === -1 || !self.duration) {
-        self.duration = ~~(self.file.getDuration());  // make it an integer
-      } else {
-        if (self.duration !== temp_duration) {
-          temp_duration = self.duration;
-        }
-        else {
-          this.file.stop();
-          this.file.release();
-          clearInterval(self.get_duration_interval);
-          console.log(self.duration);
-          this.display_duration = this.toHHMMSS(self.duration);
-          self.setToPlayback();
-        }
-      }
-    }, 100);
-  }
-
-  toHHMMSS(duration){
-    this.minutes = Math.floor(duration / 60);
-    this.seconds = Math.trunc(duration - this.minutes * 60);
-    return `${this.minutes}:${this.seconds}`;
-  }
-
   setToPlayback(){
     this.file.setVolume(1.0);
     this.file.play();
@@ -167,7 +126,7 @@ export class NativeAudiopalyerService {
 
   async getCurrentTime(): Promise<number>{
     let x = await this.file.getCurrentPosition();
-    console.log('pos: ', x);
+    console.log('curr_time: ', x);
     return parseFloat(x);
   }
 
@@ -175,29 +134,6 @@ export class NativeAudiopalyerService {
     let duration = this.file.getDuration();
     console.log('duration: ', duration);
     return duration;
-  }
-
-  getAndSetCurrentAudioPosition() {
-    const diff = 1;
-    const self = this;
-    this.get_position_interval = setInterval(() => {
-      const last_position = self.position;
-      self.file.getCurrentPosition().then((position) => {
-        if (position >= 0 && position < self.duration) {
-          if (Math.abs(last_position - position) >= diff) {
-            // set position
-            self.file.seekTo(last_position * 1000);
-          } else {
-            // update position for display
-            self.position = position;
-            this.display_position = this.toHHMMSS(self.position);
-          }
-        } else if (position >= self.duration) {
-          self.stop_native();
-          self.setToPlayback();
-        }
-      });
-    }, 100);
   }
 
   controlSeconds(action) {

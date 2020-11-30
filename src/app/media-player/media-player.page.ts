@@ -83,7 +83,7 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
     this.store.dispatch(_Actions.skip_bkwrd());
   }
 
-  seek(val){
+  seek(val: number){
     this.store.dispatch(_Actions.seek({time: val}));
   }
 
