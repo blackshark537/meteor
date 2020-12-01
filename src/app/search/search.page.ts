@@ -36,7 +36,7 @@ export class SearchPage implements OnInit {
       this.list = [];
       this.albums = [];
       this.apiService.getTrack(this.search.value).subscribe(resp=>{
-        resp.forEach(track =>{
+        resp.filter(x => !x.mime.toLowerCase().includes('image')).forEach(track =>{
           this.list.push({
             Name: track.name,
             TrackUrl: this.url+track.url,

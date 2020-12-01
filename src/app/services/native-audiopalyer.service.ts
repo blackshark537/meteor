@@ -6,7 +6,7 @@ import * as _Actions from '../actions/media.actions'
 import { TrackInterface } from '../models/global.interface';
 import { MPState } from '../models/mp.state';
 import { MusicControlService } from './music-control.service';
-import { interval, Subscription } from 'rxjs';
+import { CronJob } from 'cron';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +28,7 @@ export class NativeAudiopalyerService {
   position;
   display_duration;
   display_position;
-  timer: Subscription;
+  cronjob: CronJob;
 
   private state: MPState;
   
@@ -82,7 +82,7 @@ export class NativeAudiopalyerService {
           default:
             console.log('stop...')
             this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
-            if(this.state.currentTime > Math.floor(this.state.duration) * 0.6) {
+            if(this.state.currentTime > Math.floor(this.state.duration) -10) {
               this.file.release();
               this.skipForward();
             }
@@ -99,10 +99,16 @@ export class NativeAudiopalyerService {
   play_native(track: TrackInterface){
     this.file = this.media.create(track.TrackUrl);
     this.file.play();
-    this.timer = interval(300).subscribe(_=>{
-      this.store.dispatch(_Actions.get_duration());
-      this.store.dispatch(_Actions.get_current_time());
-    });
+    this.cronjob = new CronJob('* * * * * *', ()=> {
+      //iT will trigger this every second 
+      try {
+        this.store.dispatch(_Actions.get_duration());
+        this.store.dispatch(_Actions.get_current_time());
+      } catch (error) {
+        console.error(error);
+      }
+    }, null, true, 'America/Los_Angeles');
+    this.cronjob.start();
   }
 
   setCurrentTime(milis: number){
