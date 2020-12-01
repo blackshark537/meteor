@@ -35,7 +35,6 @@
     "cordova-plugin-media": "^5.0.3",
     "core-js": "^3.7.0",
     "howler": "^2.2.1",
-    "ng-circle-progress": "^1.6.0",
     "rxjs": "~6.6.3",
     "splash-screen": "^4.0.1",
     "tslib": "^2.0.3",

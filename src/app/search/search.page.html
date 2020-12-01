@@ -17,13 +17,13 @@
 <ion-content>
   <ion-list>
 
-    <ion-item *ngFor="let album of albums; index as i" [routerLink]="['/songs', album._id]">
+    <ion-item *ngFor="let album of albums; index as i" [routerLink]="['/songs', album.id]">
       <ion-thumbnail slot="start">
-        <img [src]="album.ImageUrl? album.ImageUrl : 'assets/thumbnail.svg'" style="width: 75px; height: auto;">
+        <img [src]="album.portada.length>0? url + album.portada[0].formats.thumbnail.url : 'assets/thumbnail.svg'" style="width: 75px; height: auto;">
       </ion-thumbnail>
         <ion-label>
-          <h2>{{album.Name}}</h2>
-          <p>{{album.Artist.Name}}</p>
+          <h2>{{album.nombre}}</h2>
+          <p *ngFor="let artista of album.artistas">Artista: {{artista.nombre}}</p>
         </ion-label>
     </ion-item>
     
@@ -33,8 +33,7 @@
       </ion-thumbnail>
         <ion-label>
           <h2>{{item.Name}}</h2>
-          <p>{{item.ArtistName}}</p>
-          <small>{{item.AlbumName}}</small>
+          <P>{{item.Created}}</P>
         </ion-label>
     </ion-item>
 

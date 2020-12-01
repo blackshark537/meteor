@@ -1,5 +1,3 @@
-import { Form } from '@angular/forms';
-
 export interface GlobalResponseInterface{
     msg: string;
     docs?: any[];

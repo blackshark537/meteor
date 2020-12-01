@@ -1,14 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ApiService } from '../services/Api.service';
-import { Album, FileInterface, TrackInterface } from '../models/global.interface';
+import { Album, TrackInterface } from '../models/global.interface';
 import { ActivatedRoute } from '@angular/router';
-import { ToastController, ModalController, Platform } from '@ionic/angular'
+import { ModalController } from '@ionic/angular'
 import { MediaPlayerPage } from '../media-player/media-player.page';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
 import * as _Actions from '../actions/media.actions';
 import { GlobalHttpService } from '../services/global.http.service';
-import { MPState } from '../models/mp.state';
 
 @Component({
   selector: 'app-songs',
@@ -32,7 +31,6 @@ export class SongsPage implements OnInit, OnDestroy {
     }
   };
   TrackList: TrackInterface[] = [];
-  Canciones: FileInterface[];
   activeTrack: string;
   search: string = '';
 
