@@ -39,7 +39,7 @@ export class NativeAudiopalyerService {
   ) { 
     store.select('MediaState').subscribe(state =>{
       this.state = state;
-      console.log(`Duration: ${state.duration} | curr_time: ${state.currentTime}`);
+      //console.log(`Duration: ${state.duration} | curr_time: ${state.currentTime}`);
     });
   }
 
@@ -64,6 +64,7 @@ export class NativeAudiopalyerService {
       console.log(`track ${this.i}, name: ${trackName}`);
 
       this.file.onStatusUpdate.subscribe(status => {
+        console.log(`Status Updated: ${status}`);
         switch (status) {
           case 1: // 1. Starting
             console.log('starting...')
