@@ -81,7 +81,7 @@ export class NativeAudiopalyerService {
           default:
             console.log('stop...')
             this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
-            if(this.state.currentTime > 10 && Math.floor(this.state.currentTime) > Math.floor(this.state.duration)-5) {
+            if(this.state.currentTime > Math.floor(this.state.duration) * 0.6) {
               this.file.release();
               this.skipForward();
             }
@@ -106,7 +106,7 @@ export class NativeAudiopalyerService {
 
   setCurrentTime(milis: number){
     console.log(`Seek pos: ${milis}`);
-    this.file.seekTo(milis);
+    this.file.seekTo(milis*1000);
   }
 
   pause_native(){
