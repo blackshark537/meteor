@@ -48,7 +48,9 @@ const mediaReducer = createReducer(load_state,
         }),
         on(actions.set_current_time, (state, {currentTime})=> {
             let new_state = {...state}
-            new_state.currentTime = currentTime;
+            if(currentTime >= 1){
+                new_state.currentTime = currentTime;
+            }
             return new_state;
         }),
         on(actions.OK, state => state)

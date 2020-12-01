@@ -39,6 +39,7 @@ export class NativeAudiopalyerService {
   ) { 
     store.select('MediaState').subscribe(state =>{
       this.state = state;
+      console.log(`Duration: ${state.duration} | curr_time: ${state.currentTime}`);
     });
   }
 
@@ -79,10 +80,11 @@ export class NativeAudiopalyerService {
           case 4:   // 4: stop
           default:
             console.log('stop...')
-            this.file.release();
             this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
-            this.timer.unsubscribe();
-            if(this.state.currentTime > 10 && Math.floor(this.state.currentTime) === Math.floor(this.state.duration)) this.skipForward();
+            if(this.state.currentTime > 10 && Math.floor(this.state.currentTime) > Math.floor(this.state.duration)-5) {
+              this.file.release();
+              this.skipForward();
+            }
             break;
         }
       });
@@ -103,6 +105,7 @@ export class NativeAudiopalyerService {
   }
 
   setCurrentTime(milis: number){
+    console.log(`Seek pos: ${milis}`);
     this.file.seekTo(milis);
   }
 
@@ -126,13 +129,11 @@ export class NativeAudiopalyerService {
 
   async getCurrentTime(): Promise<number>{
     let x = await this.file.getCurrentPosition();
-    console.log('curr_time: ', x);
     return parseFloat(x);
   }
 
   getDuration(): number{
     let duration = this.file.getDuration();
-    console.log('duration: ', duration);
     return duration;
   }
 
