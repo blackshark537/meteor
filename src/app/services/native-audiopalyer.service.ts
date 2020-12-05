@@ -70,12 +70,12 @@ export class NativeAudiopalyerService {
           case 4:   // 4: stop
           default:
             console.log('stop...')
-            this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
             if(this.appIsActive){
-              if(this.state.currentTime > Math.floor(this.state.duration) -10) this.skipForward();
+              if( this.state.currentTime > Math.floor(this.state.duration) -10) this.skipForward();
             } else {
-              this.skipForward();
+              if(this.state.isPlaying) this.skipForward(); 
             }
+            if(this.state.isPlaying) this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
             break;
         }
       });
@@ -122,6 +122,9 @@ export class NativeAudiopalyerService {
 
   async stop_native(){
     await this.file.stop();
+  }
+
+  async release(){
     await this.file.release();
   }
 

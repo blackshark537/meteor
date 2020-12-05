@@ -44,7 +44,10 @@ export class MediaPlayerEffect {
             ofType(playerActions.skip_fwrd),
             tap(async () => {
                 if(this.hybrid){
+                    await this.store.dispatch(playerActions.isPlaying({isPlaying: false}));
+                    await this.store.dispatch(playerActions.set_current_time({currentTime: 0}));
                     await this.nativeAudioPlayer.stop_native();
+                    await this.nativeAudioPlayer.release();
                     setTimeout(_=> this.nativeAudioPlayer.skipForward(), 300);
                 } else {
                     this.audioPlayer.skipForward();
@@ -57,7 +60,10 @@ export class MediaPlayerEffect {
             ofType(playerActions.skip_bkwrd),
             tap(async () => {
                 if(this.hybrid){
+                    await this.store.dispatch(playerActions.isPlaying({isPlaying: false}));
+                    await this.store.dispatch(playerActions.set_current_time({currentTime: 0}));
                     await this.nativeAudioPlayer.stop_native();
+                    await this.nativeAudioPlayer.release();
                     setTimeout(_=> this.nativeAudioPlayer.skipBackward(), 300);
                 } else {
                     this.audioPlayer.skipBackward();
@@ -110,7 +116,7 @@ export class MediaPlayerEffect {
                     let hasPrev = index > 0? true : false;
                     let hasNext = index < trackList.length-1? true : false;
                     this.audioControls.create(track, hasPrev, hasNext);
-                    this.nativeAudioPlayer.stop_native();
+                    this.nativeAudioPlayer.release();
                     this.nativeAudioPlayer.setTrackList(trackList, index);
                 } else {
                     this.audioPlayer.setTrackList(trackList, index);
