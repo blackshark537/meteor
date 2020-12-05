@@ -17,7 +17,7 @@ import { GlobalHttpService } from '../services/global.http.service';
 export class SongsPage implements OnInit, OnDestroy {
 
   url = '';
-  slice = 10;
+  slice = 15;
   Album: Album = {
     id: null,
     nombre: '',

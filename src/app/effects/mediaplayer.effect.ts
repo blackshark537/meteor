@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { AudioplayerService } from '../services/audioplayer.service';
 import * as playerActions from '../actions/media.actions';
-import { tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
 import { Platform } from '@ionic/angular';
 import { NativeAudiopalyerService } from '../services/native-audiopalyer.service';
+import { MusicControlService } from '../services/music-control.service';
+//import { StorageService } from '../services/storage.service';
 
 @Injectable()
 export class MediaPlayerEffect {
@@ -40,10 +42,10 @@ export class MediaPlayerEffect {
     skip_fwrd$ = createEffect(
         () => this.actions.pipe(
             ofType(playerActions.skip_fwrd),
-            tap(() => {
+            tap(async () => {
                 if(this.hybrid){
-                    this.nativeAudioPlayer.stop_native();
-                    this.nativeAudioPlayer.skipForward();
+                    await this.nativeAudioPlayer.stop_native();
+                    setTimeout(_=> this.nativeAudioPlayer.skipForward(), 300);
                 } else {
                     this.audioPlayer.skipForward();
                 }
@@ -53,10 +55,10 @@ export class MediaPlayerEffect {
     skip_bkwrd$ = createEffect(
         () => this.actions.pipe(
             ofType(playerActions.skip_bkwrd),
-            tap(() => {
+            tap(async () => {
                 if(this.hybrid){
-                    this.nativeAudioPlayer.stop_native();
-                    this.nativeAudioPlayer.skipBackward();
+                    await this.nativeAudioPlayer.stop_native();
+                    setTimeout(_=> this.nativeAudioPlayer.skipBackward(), 300);
                 } else {
                     this.audioPlayer.skipBackward();
                 }
@@ -104,6 +106,11 @@ export class MediaPlayerEffect {
             ofType(playerActions.set_TrackList),
             tap(({trackList, index}) => {
                 if(this.hybrid){
+                    let track = trackList[index];
+                    let hasPrev = index > 0? true : false;
+                    let hasNext = index < trackList.length-1? true : false;
+                    this.audioControls.create(track, hasPrev, hasNext);
+                    this.nativeAudioPlayer.stop_native();
                     this.nativeAudioPlayer.setTrackList(trackList, index);
                 } else {
                     this.audioPlayer.setTrackList(trackList, index);
@@ -111,11 +118,23 @@ export class MediaPlayerEffect {
             })
     ), {dispatch: false});
 
+    /* onExit$ = createEffect(
+        ()=> this.actions.pipe(
+            ofType(playerActions.on_Exit),
+            tap(_=>{ 
+                this.store.select('MediaState').subscribe(state =>{
+                    this.Storage.setStorage('state', state);
+                }).unsubscribe();
+            }),
+    ), {dispatch: false}); */
+
     constructor(
         private actions: Actions,
         private store: Store<AppState>,
         private audioPlayer: AudioplayerService,
         private nativeAudioPlayer: NativeAudiopalyerService,
+        private audioControls: MusicControlService,
+        //private Storage: StorageService,
         private platform: Platform
     ){ }
 

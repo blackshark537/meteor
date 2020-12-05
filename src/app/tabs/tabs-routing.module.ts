@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
+import { GuardGuard } from '../services/guard.guard';
 
 const routes: Routes = [
   {
@@ -52,6 +53,7 @@ const routes: Routes = [
         children: [
           {
             path: '',
+            canActivate: [GuardGuard],
             loadChildren: () =>
               import('../profile/tab3.module').then(m => m.Tab3PageModule)
           }

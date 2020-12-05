@@ -1,8 +1,8 @@
-import { createReducer, on, Action, State} from '@ngrx/store';
+import { createReducer, on, Action} from '@ngrx/store';
 import * as actions from '../actions/media.actions';
 import { MPState } from '../models/mp.state';
 
-const initial_state: MPState = {
+const initial_state: MPState  = {
     AlbumImg: '',
     currentTrack: 0,
     isPlaying: false,
@@ -13,7 +13,7 @@ const initial_state: MPState = {
     shuffle: false,
     duration: 0,
     currentTime: 0
-}
+};
 
 const load_state: MPState = JSON.parse(localStorage.getItem('state')) || initial_state;
 

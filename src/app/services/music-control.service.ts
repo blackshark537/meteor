@@ -1,140 +1,139 @@
 import { Injectable } from '@angular/core';
 import { TrackInterface } from '../models/global.interface';
-import { Plugins } from '@capacitor/core';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
 import * as _Actions from '../actions/media.actions';
-
-const { CapacitorMusicControls } = Plugins;
+import { MusicControls } from '@ionic-native/music-controls';
+import { Platform } from '@ionic/angular';
+import { MPState } from '../models/mp.state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MusicControlService {
 
+  state: MPState;
+
   constructor(
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    platform: Platform
   ) { 
+    if(platform.is('hybrid')){
+      store.select('MediaState').subscribe(state =>{
+        MusicControls.updateIsPlaying(state.isPlaying);
+        this.state = state;
+       /* MusicControls.updateElapsed({
+         elapsed: state.currentTime, // seconds
+         isPlaying: state.isPlaying
+       }); */
+     });
+    }
   }
 
-  create(Track: TrackInterface, _hasPrev?: boolean, _hasNext?: boolean) {
-    CapacitorMusicControls.create({
-      track: Track.Name,        // optional, default : ''
-      artist: Track.ArtistName,                       // optional, default : ''
-      cover: Track.ImageUrl,      // optional, default : nothing
+  create(track: TrackInterface, _Pv: boolean, _Nx: boolean) {
+    MusicControls.create({
+      track: track.Name,		// optional, default : ''
+      artist: track.Artist,						// optional, default : ''
+      album: track.Album,     // optional, default: ''
+      cover: track.ImageUrl,		// optional, default : nothing
       // cover can be a local path (use fullpath 'file:///storage/emulated/...', or only 'my_image.jpg' if my_image.jpg is in the www folder of your app)
-      //           or a remote url ('http://...', 'https://...', 'ftp://...')
-      isPlaying: true,                         // optional, default : true
-      dismissable: true,                         // optional, default : false
+      //			 or a remote url ('http://...', 'https://...', 'ftp://...')
+      isPlaying: true,							// optional, default : true
+      dismissable: false,							// optional, default : false
 
       // hide previous/next/close buttons:
-      hasPrev: false,    // show previous button, optional, default: true
-      hasNext: false,      // show next button, optional, default: true
-      hasClose: true,       // show close button, optional, default: false
+      hasPrev: _Pv,		// show previous button, optional, default: true
+      hasNext: _Nx,		// show next button, optional, default: true
+      hasClose: true,		// show close button, optional, default: false
 
       // iOS only, optional
-      album: Track.AlbumName,     // optional, default: ''
-      duration: 60, // optional, default: 0
+
+      duration: 300, // optional, default: 0
       elapsed: 10, // optional, default: 0
-      hasSkipForward: false,  // show skip forward button, optional, default: false
-      hasSkipBackward: false, // show skip backward button, optional, default: false
-      skipForwardInterval: 15, // display number for skip forward, optional, default: 0
-      skipBackwardInterval: 15, // display number for skip backward, optional, default: 0
-      hasScrubbing: false, // enable scrubbing from control center and lockscreen progress bar, optional
+      hasSkipForward: false, //optional, default: false. true value overrides hasNext.
+      hasSkipBackward: false, //optional, default: false. true value overrides hasPrev.
+      skipForwardInterval: 15, //optional. default: 0.
+      skipBackwardInterval: 15, //optional. default: 0.
+      hasScrubbing: false, //optional. default to false. Enable scrubbing from control center progress bar 
 
       // Android only, optional
-
-      // text displayed in the status bar when the notification (and the ticker) are updated, optional
-      ticker: `Now playing ${Track.Name}`,
-      // All icons default to their built-in android equivalents
+      // text displayed in the status bar when the notification (and the ticker) are updated
+      ticker: `Now playing "${track.Name}"`,
+      //All icons default to their built-in android equivalents
+      //The supplied drawable name, e.g. 'media_play', is the name of a drawable found under android/res/drawable* folders
       playIcon: 'media_play',
       pauseIcon: 'media_pause',
       prevIcon: 'media_prev',
       nextIcon: 'media_next',
       closeIcon: 'media_close',
       notificationIcon: 'notification'
-    }, this.onSuccess(), error =>{
-      console.log(error);
     });
-  }
 
-  onSuccess(){
-    CapacitorMusicControls.addListener('controlsNotification', (info: any) => {
-      console.log('controlsNotification was fired');
-      this.handleControlsEvent(info);
-  });
-  }
-
-  updatePlaying(value: boolean){
-    CapacitorMusicControls.updateIsPlaying({
-      isPlaying: value, // affects Android only
-      //elapsed: timeElapsed // affects iOS Only
+    MusicControls.subscribe().subscribe( _action =>{
+      this.events(_action);
     });
+    MusicControls.listen();
   }
 
-  dismiss(){
-    if(CapacitorMusicControls) CapacitorMusicControls.destroy();
-  }
-
-  handleControlsEvent(action){
-
-    console.log("hello from handleControlsEvent")
-    const message = action.message;
-  
-    console.log("message: " + message)
-  
-    switch(message) {
+  events(action) {
+    const message = JSON.parse(action).message;
+    switch (message) {
       case 'music-controls-next':
-        // next
-        this.store.dispatch(_Actions.skip_fwrd());
+        // Do something
+        if(!this.state.loading) this.store.dispatch(_Actions.skip_fwrd());
         break;
       case 'music-controls-previous':
-        // previous
-        this.store.dispatch(_Actions.skip_bkwrd());
+        // Do something
+        if(!this.state.loading) this.store.dispatch(_Actions.skip_bkwrd());
         break;
       case 'music-controls-pause':
-        // paused
-        this.store.dispatch(_Actions.pause());
+        // Do something
+        if(!this.state.loading) this.store.dispatch(_Actions.pause());
         break;
       case 'music-controls-play':
-        // resumed
-        this.store.dispatch(_Actions.resume());
+        // Do something
+        if(!this.state.loading) this.store.dispatch(_Actions.resume());
         break;
       case 'music-controls-destroy':
-        // controls were destroyed
-        this.store.dispatch(_Actions.pause());
+        // Do something
+        this.destroy();
         break;
-  
+
       // External controls (iOS only)
-      case 'music-controls-toggle-play-pause' :
-        // do something
+      case 'music-controls-toggle-play-pause':
+        // Do something
         break;
       case 'music-controls-seek-to':
-        // do something
-        break;
-      case 'music-controls-skip-forward':
+        const seekToInSeconds = JSON.parse(action).position;
+        MusicControls.updateElapsed({
+          elapsed: seekToInSeconds,
+          isPlaying: true
+        });
         // Do something
         break;
-      case 'music-controls-skip-backward':
-        // Do something
-        break;
-  
+
       // Headset events (Android only)
       // All media button events are listed below
-      case 'music-controls-media-button' :
+      case 'music-controls-media-button':
         // Do something
+        if(!this.state.loading) this.store.dispatch(_Actions.skip_fwrd());
         break;
       case 'music-controls-headset-unplugged':
         // Do something
-        this.store.dispatch(_Actions.pause());
+        if(!this.state.loading) this.store.dispatch(_Actions.pause());
         break;
       case 'music-controls-headset-plugged':
         // Do something
-        this.store.dispatch(_Actions.resume());
+        if(!this.state.loading) this.store.dispatch(_Actions.resume());
         break;
       default:
         break;
     }
   }
 
+  async destroy(){
+    await MusicControls.destroy().then(val =>{
+      this.store.dispatch(_Actions.pause());
+    });
+  }
 }

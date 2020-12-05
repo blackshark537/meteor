@@ -17,6 +17,14 @@ export class ApiService {
     private globalHttp: GlobalHttpService
   ) { }
 
+  create_user(data: Register): Observable<AuthResp>{
+    return this.http.post<AuthResp>(`${this.globalHttp.baseUrl}/auth/local/register`, data);
+  }
+
+  login(data: Login): Observable<AuthResp>{
+    return this.http.post<AuthResp>(`${this.globalHttp.baseUrl}/auth/local`, data);
+  }
+
   getCategories(name?: string): Observable<Categories[]>{
     return this.http.get<Categories[]>(`${this.url}/categories?_limit=10&_sort=nombre%3AASC&_q=${name}`)
       .pipe(catchError(error => this.globalHttp.handelErrors(error)));
@@ -38,4 +46,20 @@ export class ApiService {
       .pipe( catchError(error => this.globalHttp.handelErrors(error)));
   }
 
+}
+
+interface Register{
+  username: string;
+  email: string;
+  password: string;
+}
+
+interface Login{
+  identifier: string;
+  password: string;
+}
+
+interface AuthResp{
+  jwt: string;
+  user: any
 }

@@ -1,0 +1,102 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-back-button></ion-back-button>
+    <ion-title size="large">{{logInUp_toggle? 'Login' : 'New Account' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="dark" (click)="toggle()">
+        {{logInUp_toggle? 'Signup' : 'Signin' }}
+        <ion-icon slot="end" name="person"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <form [formGroup]="userForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col size="12">
+          <h2 style="text-align: center; padding-bottom: 1em;">
+            <img src="assets/icon.png" style="width: 40px; height: 40px;" alt="">
+            Meteor
+          </h2>
+        </ion-col>
+      </ion-row>
+      <ion-row></ion-row>
+      <ion-row>
+        <ion-col size="12" >
+  
+          <ion-list lines="full" class="ion-no-margin ion-no-padding" *ngIf="logInUp_toggle">
+
+            <ion-item>
+              <ion-label position="floating">
+                E-mail:
+                <ion-icon slot="end" 
+                color="{{email.invalid && email.touched? 'danger' : 'success'}}" 
+                name="{{email.invalid && email.touched? 'close' : 'checkmark'}}"></ion-icon>
+              </ion-label>
+              <ion-input type="email" required="true" formControlName="email" clearInput></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">
+                Password:
+                <ion-icon slot="end" 
+                    color="{{pswd.invalid && pswd.touched? 'danger' : 'success'}}" 
+                    name="{{pswd.invalid && pswd.touched? 'close' : 'checkmark'}}"></ion-icon>
+              </ion-label>
+              <ion-input type="password" required="true" formControlName="password" clearInput ></ion-input>
+            </ion-item>
+            <div class="ion-padding">
+              <ion-button [disabled]="!login_valid" expand="block" type="submit" (click)="submit()" class="ion-no-margin">Log in</ion-button>
+            </div>
+          </ion-list>
+  
+          <ion-list lines="full" class="ion-no-margin ion-no-padding" *ngIf="!logInUp_toggle">
+            <ion-item>
+              <ion-label position="floating">
+                Name:
+                <ion-icon slot="end" 
+                    color="{{name.invalid && name.touched? 'danger' : 'success'}}" 
+                    name="{{name.invalid && name.touched? 'close' : 'checkmark'}}"></ion-icon>
+              </ion-label>
+              <ion-input type="text" required="true" formControlName="username" clearInput ></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">
+                E-mail:
+                <ion-icon slot="end" 
+                color="{{email.invalid && email.touched? 'danger' : 'success'}}" 
+                name="{{email.invalid && email.touched? 'close' : 'checkmark'}}"></ion-icon>
+              </ion-label>
+              <ion-input type="email" required="true" formControlName="email" clearInput></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">
+                Password:
+                <ion-icon slot="end" 
+                    color="{{pswd.invalid && pswd.touched? 'danger' : 'success'}}" 
+                    name="{{pswd.invalid && pswd.touched? 'close' : 'checkmark'}}"></ion-icon>
+              </ion-label>
+              <ion-input type="password" required="true" formControlName="password" clearInput ></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="floating">
+                confirm Password:
+                <ion-icon slot="end" 
+                    color="{{confirmPassword.invalid && confirmPassword.touched? 'danger' : 'success'}}" 
+                    name="{{confirmPassword.invalid && confirmPassword.touched? 'close' : 'checkmark'}}"></ion-icon>
+              </ion-label>
+              <ion-input type="password" required="true" formControlName="confirmPassword" clearInput ></ion-input>
+            </ion-item>
+
+            <div class="ion-padding">
+              <ion-button [disabled]="!form_valid" expand="block" type="submit" class="ion-no-margin">Create account</ion-button>
+            </div>
+          </ion-list>
+
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>

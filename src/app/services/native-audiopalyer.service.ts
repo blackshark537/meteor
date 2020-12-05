@@ -5,8 +5,12 @@ import { AppState } from '../models/app.state';
 import * as _Actions from '../actions/media.actions'
 import { TrackInterface } from '../models/global.interface';
 import { MPState } from '../models/mp.state';
-import { MusicControlService } from './music-control.service';
-import { CronJob } from 'cron';
+//import { CronJob } from 'cron';
+import { Platform } from '@ionic/angular';
+import { Plugins } from '@capacitor/core';
+import { interval } from 'rxjs';
+
+const { App } = Plugins;
 
 @Injectable({
   providedIn: 'root'
@@ -14,55 +18,40 @@ import { CronJob } from 'cron';
 export class NativeAudiopalyerService {
 
   public file: MediaObject = null;
-  private trackList: TrackInterface[];
   private i: number;
-  seconds: number = 0;
-  minutes: number = 0;
-
-  public TrackName: string;
-  public albumImg: string;
-  public playing: boolean;
-  get_duration_interval;
-  get_position_interval
-  duration;
-  position;
-  display_duration;
-  display_position;
-  cronjob: CronJob;
+  private timer = interval(1000); //timer to update audio progress bar
+  private appIsActive: boolean = true;
+  //cronjob: CronJob;
 
   private state: MPState;
   
   constructor(
     private store: Store<AppState>,
     private media: Media,
-    private audioControls: MusicControlService
+    platform: Platform
   ) { 
-    store.select('MediaState').subscribe(state =>{
-      this.state = state;
-      //console.log(`Duration: ${state.duration} | curr_time: ${state.currentTime}`);
-    });
+    if(platform.is('hybrid')){
+      store.select('MediaState').subscribe(state =>{
+        this.state = state;
+      });
+      App.addListener('appStateChange', appState =>{
+        this.appIsActive = appState.isActive;
+      });
+    }
   }
 
   async setTrackList(trackList: TrackInterface[], index: number){
     
-    this.trackList = trackList;
     this.i = index;
-    let trackName = this.trackList[this.i].ArtistName? 
-    this.trackList[this.i].Name + ' - '+ this.trackList[this.i].ArtistName 
-    : this.trackList[this.i].Name;
+    let trackName = this.state.trackList[this.i].ArtistName? 
+    this.state.trackList[this.i].Name + ' - '+ this.state.trackList[this.i].ArtistName 
+    : this.state.trackList[this.i].Name;
     await this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
-    await this.store.dispatch(_Actions.Set_TrackName({trackName: trackName}));
+    await this.store.dispatch(_Actions.Set_TrackName({trackName}));
     await this.store.dispatch(_Actions.Set_CurrentTrack({currentTrack: index}));
-    if(this.file) await this.stop_native();
+
     setTimeout( async _=>{
-      let track = trackList[this.i];
-      let hasPrev = this.i > 0? true : false;
-      let hasNext = this.i < trackList.length-1? true : false;
-      this.audioControls.create(track, hasPrev, hasNext);
       await this.play_native(trackList[this.i]);
-
-      console.log(`track ${this.i}, name: ${trackName}`);
-
       this.file.onStatusUpdate.subscribe(status => {
         console.log(`Status Updated: ${status}`);
         switch (status) {
@@ -82,8 +71,9 @@ export class NativeAudiopalyerService {
           default:
             console.log('stop...')
             this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
-            if(this.state.currentTime > Math.floor(this.state.duration) -10) {
-              this.file.release();
+            if(this.appIsActive){
+              if(this.state.currentTime > Math.floor(this.state.duration) -10) this.skipForward();
+            } else {
               this.skipForward();
             }
             break;
@@ -92,14 +82,20 @@ export class NativeAudiopalyerService {
     },500);
   }
 
-  mute(){
-    this.file.setVolume(0.0);
+  async mute(){
+    await this.file.setVolume(0.0);
   }
 
-  play_native(track: TrackInterface){
-    this.file = this.media.create(track.TrackUrl);
-    this.file.play();
-    this.cronjob = new CronJob('* * * * * *', ()=> {
+  async play_native(track: TrackInterface){
+    this.file = await this.media.create(track.TrackUrl);
+    await this.file.play();
+    this.timer.subscribe(async _=>{
+      if(this.appIsActive){
+        await this.store.dispatch(_Actions.get_duration());
+        await this.store.dispatch(_Actions.get_current_time());
+      }
+    });
+/*     this.cronjob = new CronJob('* * * * * *', ()=> {
       //iT will trigger this every second 
       try {
         this.store.dispatch(_Actions.get_duration());
@@ -107,31 +103,26 @@ export class NativeAudiopalyerService {
       } catch (error) {
         console.error(error);
       }
-    }, null, true, 'America/Los_Angeles');
-    this.cronjob.start();
+    }, null, true, 'America/Santo_Domingo');
+
+    this.cronjob.start(); */
   }
 
-  setCurrentTime(milis: number){
-    console.log(`Seek pos: ${milis}`);
-    this.file.seekTo(milis*1000);
+  async setCurrentTime(milis: number){
+    await this.file.seekTo(milis*1000);
   }
 
-  pause_native(){
-    this.file.pause();
+  async pause_native(){
+    await this.file.pause();
   }
 
-  resume_native(){
-    this.file.play();
+  async resume_native(){
+    await this.file.play();
   }
 
   async stop_native(){
     await this.file.stop();
     await this.file.release();
-  }
-
-  setToPlayback(){
-    this.file.setVolume(1.0);
-    this.file.play();
   }
 
   async getCurrentTime(): Promise<number>{
@@ -144,37 +135,23 @@ export class NativeAudiopalyerService {
     return duration;
   }
 
-  controlSeconds(action) {
-    const step = 5;
-    const numberRange = this.position;
-    switch (action) {
-      case 'back':
-        this.position = numberRange < step ? 0.001 : numberRange - step;
-        break;
-      case 'forward':
-        this.position = numberRange + step < this.duration ? numberRange + step : this.duration;
-        break;
-      default:
-        break;
-    }
-  }
-
-  skipForward(){
+  async skipForward(){
     if(this.state.repeat){
-      this.setTrackList(this.trackList, this.i);
+      await this.setCurrentTime(0);
+      await this.file.play();
     } else if(this.state.shuffle){
-      this.i = Math.floor(Math.random() * this.trackList.length-1);
-      this.setTrackList(this.trackList, this.i);
-    } else if(this.trackList && this.i < this.trackList.length-1){
-      this.i++;
-      this.setTrackList(this.trackList, this.i);
+      this.i = Math.floor(Math.random() * this.state.trackList.length-1);
+      await this.store.dispatch(_Actions.set_TrackList({trackList:this.state.trackList, index: this.i}));
+    } else if(this.state.trackList && this.i < this.state.trackList.length-1){
+      ++this.i;
+      await this.store.dispatch(_Actions.set_TrackList({trackList:this.state.trackList, index: this.i}));
     }
   }
 
   async skipBackward(){
-      if(this.trackList && this.i > 0){
-        this.i--;
-        this.setTrackList(this.trackList, this.i);
+      if(this.state.trackList && this.i > 0){
+        --this.i;
+        await this.store.dispatch(_Actions.set_TrackList({trackList:this.state.trackList, index: this.i}));
       }
   }
 

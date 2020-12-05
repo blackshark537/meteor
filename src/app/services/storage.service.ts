@@ -13,31 +13,7 @@ export class StorageService {
     private platform: Platform
   ) { }
 
-  setTrackName(Name: string){
-    this.setStorage('trackName', Name);
-  }
-
-  getTrackName(): string{
-    return this.getStorage('trackName');
-  }
-
-  setAlbumImg(imgUri: string){
-    this.setStorage('albumImg', imgUri);
-  }
-
-  getAlbumImg(): string{
-    return this.getStorage('albumImg');
-  }
-
-  setCurrentTrack(trackUri: string){
-    this.setStorage('currentTrack', trackUri);
-  }
-
-  getCurrentTrack(): string{
-    return this.getStorage('currentTrack');
-  }
-
-  private setStorage(key: string, value: any){
+  setStorage(key: string, value: any){
     if(this.platform.is('hybrid')){
       Storage.set({
         key,
@@ -48,7 +24,7 @@ export class StorageService {
     }
   }
 
-  private getStorage(key: string): string{
+  getStorage(key: string): string{
     let val: string;
     if(this.platform.is('hybrid')){
       Storage.get({ key}).then(result => {

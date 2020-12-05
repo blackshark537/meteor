@@ -9,15 +9,14 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-  <div style="margin-top: 2em;">
-    <img [src]="state.AlbumImg" id="bg-img">
-  </div>
+  <div id="bg-img" [ngStyle]="{'background-image': 'url(' + state.AlbumImg + ')'}"></div>
   <div id="cover">
-    <img [src]="state.AlbumImg" id="cover-img">
+      <img [src]="state.AlbumImg" id="cover-img">
   </div>
 </ion-header>
-<ion-content>
 
+<ion-content *ngIf="!fromSongs">
+  
 </ion-content>
 <ion-footer>
   <ion-toolbar>

@@ -1,7 +1,7 @@
-<ion-header>
+<ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title slot="start">
-      Account
+      Profile
     </ion-title>
     <ion-button slot="end" color="dark" shape="round"  fill="clear">
       <ion-icon name="settings"></ion-icon>
@@ -9,44 +9,6 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content fullscreen>
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12" >
-        
-        <h2 style="text-align: center; padding-bottom: 1em;">
-          <img src="assets/icon.png" style="width: 40px; height: 40px;" alt="">
-          Meteor
-        </h2>
-<!--         <p>Developer by: BlackShark OpenSource</p>
-        <p>Version: 0.0.1 Alpha</p> -->
-        <ion-list lines="full" class="ion-no-margin ion-no-padding">
-<!--           <ion-item>
-            <ion-label position="stacked">First Name <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input required type="text" oninput="handleFirstNameValue(event)"></ion-input>
-          </ion-item>
-
-          <ion-item>
-            <ion-label position="stacked">Last Name <ion-text color="danger">*</ion-text></ion-label>
-            <ion-input required type="text" oninput="handleLastNameValue(event)"></ion-input>
-          </ion-item> -->
-          <ion-item>
-            <ion-label position="stacked">Name:</ion-label>
-            <ion-input type="text" clearInput value="" placeholder="Example: Luis"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="stacked">E-mail:</ion-label>
-            <ion-input type="email" clearInput value="" placeholder="Example: user@mail.com"></ion-input>
-          </ion-item>
-          <ion-item>
-            <ion-label position="stacked">Password:</ion-label>
-            <ion-input type="password" clearInput value="" placeholder="**********"></ion-input>
-          </ion-item>
-        </ion-list>
-        <div class="ion-padding">
-          <ion-button expand="block" type="submit" class="ion-no-margin">Create account</ion-button>
-        </div>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+<ion-content [fullscreen]="true">
+  
 </ion-content>
