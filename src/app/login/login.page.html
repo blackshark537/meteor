@@ -1,7 +1,11 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-back-button></ion-back-button>
-    <ion-title size="large">{{logInUp_toggle? 'Login' : 'New Account' }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button color="dark" [routerLink]="['/tabs/tab1']" >
+        <ion-icon slot="start" name="albums"></ion-icon>
+        Albums
+      </ion-button>
+    </ion-buttons>
     <ion-buttons slot="end">
       <ion-button color="dark" (click)="toggle()">
         {{logInUp_toggle? 'Signup' : 'Signin' }}
@@ -20,6 +24,9 @@
             <img src="assets/icon.png" style="width: 40px; height: 40px;" alt="">
             Meteor
           </h2>
+        </ion-col>
+        <ion-col size="12">
+          <ion-title size="large">{{logInUp_toggle? 'Login' : 'New Account' }}</ion-title>
         </ion-col>
       </ion-row>
       <ion-row></ion-row>
@@ -91,7 +98,7 @@
             </ion-item>
 
             <div class="ion-padding">
-              <ion-button [disabled]="!form_valid" expand="block" type="submit" class="ion-no-margin">Create account</ion-button>
+              <ion-button [disabled]="!form_valid" expand="block" type="submit" (click)="submit()" class="ion-no-margin">Create account</ion-button>
             </div>
           </ion-list>
 

@@ -3,7 +3,7 @@ import { HttpClient} from '@angular/common/http';
 import { GlobalHttpService } from './global.http.service';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { Album, Categories, FileInterface } from '../models/global.interface';
+import { Album, Artist, Categories, FileInterface, LoginResp, LoginUser, RegisterUser } from '../models/global.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,17 +17,24 @@ export class ApiService {
     private globalHttp: GlobalHttpService
   ) { }
 
-  create_user(data: Register): Observable<AuthResp>{
-    return this.http.post<AuthResp>(`${this.globalHttp.baseUrl}/auth/local/register`, data);
+  create_user(data: RegisterUser): Observable<LoginResp>{
+    return this.http.post<LoginResp>(`${this.globalHttp.baseUrl}/auth/local/register`, data)
+    .pipe(catchError(error => this.globalHttp.handelErrors(error)));
   }
 
-  login(data: Login): Observable<AuthResp>{
-    return this.http.post<AuthResp>(`${this.globalHttp.baseUrl}/auth/local`, data);
+  login(data: LoginUser): Observable<LoginResp>{
+    return this.http.post<LoginResp>(`${this.globalHttp.baseUrl}/auth/local`, data)
+    .pipe(catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   getCategories(name?: string): Observable<Categories[]>{
     return this.http.get<Categories[]>(`${this.url}/categories?_limit=10&_sort=nombre%3AASC&_q=${name}`)
       .pipe(catchError(error => this.globalHttp.handelErrors(error)));
+  }
+
+  getArtists(): Observable<Artist[]>{
+    return this.http.get<Artist[]>(`${this.url}/artists?_sort=nombre%3AASC`)
+    .pipe(catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   getAlbum(id: string): Observable<Album>{
@@ -45,21 +52,4 @@ export class ApiService {
     return this.http.get<Album[]>(`${this.url}/albums?_limit=10&_sort=nombre%3AASC&_q=${name}`)
       .pipe( catchError(error => this.globalHttp.handelErrors(error)));
   }
-
-}
-
-interface Register{
-  username: string;
-  email: string;
-  password: string;
-}
-
-interface Login{
-  identifier: string;
-  password: string;
-}
-
-interface AuthResp{
-  jwt: string;
-  user: any
 }

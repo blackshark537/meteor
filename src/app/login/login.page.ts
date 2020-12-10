@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ApiService } from '../services/Api.service';
+import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { AppState } from '../models/app.state';
+import { Login, CreateUser } from '../actions/user.actions';
+import { GlobalHttpService } from '../services/global.http.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +19,9 @@ export class LoginPage implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private apiService: ApiService
+    private globalService: GlobalHttpService,
+    private store: Store<AppState>,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -56,15 +62,34 @@ export class LoginPage implements OnInit {
   submit(){
     if(this.logInUp_toggle){
       //login
-      this.apiService.login({
+      this.store.dispatch(Login({user:{
         identifier: this.userForm.get('email').value,
         password: this.userForm.get('password').value
-      }).subscribe(resp =>{
-        console.log('well done! ', resp);
-      });
+      }}));
+      this.wait();
+
     }else{
       //signin
+      this.store.dispatch(CreateUser({user: {
+        email: this.userForm.get('email').value,
+        password: this.userForm.get('password').value,
+        username: this.userForm.get('username').value
+      }}));
+      this.wait();
+      this.showMsg('Por favor inicie session...');
+      this.toggle();
     }
+  }
+
+  async wait(){
+    await this.globalService.loading();
+  }
+
+  async showMsg(msg: string){
+    await this.globalService.presentAlert({
+      title: 'Atención!!!',
+      msg
+    });
   }
 
   toggle(){

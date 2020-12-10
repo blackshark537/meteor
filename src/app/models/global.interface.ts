@@ -1,8 +1,49 @@
-export interface GlobalResponseInterface{
-    msg: string;
-    docs?: any[];
-    doc?: any;
-    totalDocs: number;
+/* 
+* User Interfaces
+*/
+export interface RegisterUser{
+    username: string;
+    email: string;
+    password: string;
+}
+  
+export interface LoginUser{
+    identifier: string;
+    password: string;
+}
+  
+export interface LoginResp{
+    jwt: string;
+    user: UserInterface
+}
+
+export interface UserInterface{
+    Playlist: [];
+    blocked: boolean;
+    confirmed: boolean;
+    created_at: string;
+    email: string;
+    id: number;
+    provider: string;
+    role: Role;
+    updated_at: string;
+    username: string;
+}
+
+export interface userPlaylist{
+    id: number;
+    canciones: any[];
+    created_at: Date;
+    nombre: string;
+    published_at: Date;
+    users_permissions_user: UserInterface
+}
+
+interface Role{
+    id: number;
+    name: string;
+    description: string;
+    type: string;
 }
 
 /* 
@@ -105,44 +146,6 @@ interface Canciones{
     "albums": Album[];
  }
 
- interface TrackList{
-     Name: string;
-     TrackUrl: string
- }
-
-export interface ALbumInterface{
-    _id?: string;
-    Name: string;
-    ImageUrl: string;
-    releaseDate: string;
-    Gener?: string;
-    Artist: any;
-    Created?: string;
-    TrackList:TrackList[];
-}
-
-export interface AlbumDto{
-    Name: string;
-    ImageUrl: string;
-    releaseDate: string;
-    Gener: string;
-    Artist: string;
-}
-
-/* 
- *  Artist Interfaces 
- */
-export interface ArtistDto{
-    Name: string;
-    ImageUrl: string;
-}
-
-export interface ArtistInterface{
-    _id: string;
-    Name: string;
-    ImageUrl?: string;
-    Created: string;
-}
 
 /* 
  * TracksInterfaces

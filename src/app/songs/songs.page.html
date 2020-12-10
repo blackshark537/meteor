@@ -14,7 +14,7 @@
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
-  <ion-img style="height: 256px; width: auto; z-index: -1;" [src]="Album.artistas[0]? url + Album.artistas[0].imagen[0].url : '/assets/icon.png'">
+  <ion-img style="height: 256px; width: auto; z-index: -1;" [src]="Album.artistas[0]? url + Album.artistas[0].imagen.url : '/assets/icon.png'">
   </ion-img>
   <ion-fab-button color="tertiary"  class="fab-button-play" (click)="setTrackList(0)">
     <ion-icon name="play"></ion-icon>

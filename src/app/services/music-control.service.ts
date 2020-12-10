@@ -42,8 +42,8 @@ export class MusicControlService {
       dismissable: false,							// optional, default : false
 
       // hide previous/next/close buttons:
-      hasPrev: _Pv,		// show previous button, optional, default: true
-      hasNext: _Nx,		// show next button, optional, default: true
+      hasPrev: false,		// show previous button, optional, default: true
+      hasNext: false,		// show next button, optional, default: true
       hasClose: true,		// show close button, optional, default: false
 
       // iOS only, optional
@@ -88,11 +88,11 @@ export class MusicControlService {
         break;
       case 'music-controls-pause':
         // Do something
-        if(!this.state.loading) this.store.dispatch(_Actions.pause());
+        //if(!this.state.loading) this.store.dispatch(_Actions.pause());
         break;
       case 'music-controls-play':
         // Do something
-        if(!this.state.loading) this.store.dispatch(_Actions.resume());
+        //if(!this.state.loading) this.store.dispatch(_Actions.resume());
         break;
       case 'music-controls-destroy':
         // Do something
@@ -133,7 +133,7 @@ export class MusicControlService {
 
   async destroy(){
     await MusicControls.destroy().then(val =>{
-      this.store.dispatch(_Actions.pause());
+      //this.store.dispatch(_Actions.pause());
     });
   }
 }

@@ -7,7 +7,7 @@ export const pause = createAction('[Media Player] pause')
 export const skip_fwrd = createAction('[Media Player] skip forward')
 export const skip_bkwrd = createAction('[Media Player] skip backward')
 export const seek = createAction('[Media Player] seek', props<{time: number}>())
-export const set_TrackList = createAction('[Media Player] set TrackList', props<{trackList: TrackInterface[], index: number}>())
+export const set_TrackList = createAction('[Media Player] set TrackList', props<{trackList: TrackInterface[], index: number}>());
 
 export const OK = createAction('[Media Player] ok');
 

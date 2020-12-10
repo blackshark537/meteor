@@ -1,14 +1,50 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title slot="start">
-      Profile
+      {{user.username | titlecase}}
     </ion-title>
-    <ion-button slot="end" color="dark" shape="round"  fill="clear">
+    <ion-button (click)="openPopOver($event)" slot="end" color="dark" shape="round"  fill="clear">
       <ion-icon name="settings"></ion-icon>
     </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  
+  <ion-list>
+    <ion-item>
+      <ion-label>
+        <h2>
+          <ion-icon color="dark" name="person" slot="start"></ion-icon>
+          {{user.username | titlecase}}
+        </h2>
+        <h2>
+          <ion-icon color="dark" name="mail" slot="start"></ion-icon>
+          {{user.email | titlecase}}
+        </h2>
+        <p>
+          <ion-icon color="dark" name="calendar-outline" slot="start"></ion-icon>
+          {{user.created_at | date: 'short'}}
+        </p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-list>
+    <ion-list-header>
+      <ion-label>Playlists</ion-label>
+    </ion-list-header>
+    <ion-list-header>
+      <ion-buttons>
+        <ion-button color="secondary" (click)="openPlaylistForm()">
+          <ion-icon slot="start" name="add"></ion-icon>
+          Crear playlist
+        </ion-button>
+      </ion-buttons>
+    </ion-list-header>
+    <ion-item-divider></ion-item-divider>
+    <ion-item button *ngFor="let list of user.playlists; index as i;">
+      <ion-label>
+        <h2>{{list.nombre | titlecase}}</h2>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

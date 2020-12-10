@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { throwError, Observable } from 'rxjs';
-import { AlertController, ToastController } from '@ionic/angular';
+import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +13,8 @@ export class GlobalHttpService {
 
   constructor(
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private loadCtrl: LoadingController
   ) { }
 
   public handelErrors(error: HttpErrorResponse): Observable<any>{
@@ -43,4 +44,41 @@ export class GlobalHttpService {
     await alert.onWillDismiss();
   }
 
+  async loading(){
+    const load = await this.loadCtrl.create({
+      animated: true,
+      backdropDismiss: false,
+      duration: 2000,
+      message: 'Por favor espere',
+      spinner: 'lines',
+      keyboardClose: false,
+    });
+
+    await load.present();
+    await load.onWillDismiss();
+  }
+
+  async playlistForm(){
+    const alertForm = await this.alertCtrl.create({
+      animated: true,
+      header: 'Nueva playlist',
+      subHeader: 'nombre de la playlist',
+      inputs: [{
+        label: 'Nueva playlist',
+        cssClass: 'dark',
+        type: 'text',
+        value: '',
+        name: 'playlist',
+        placeholder: 'Ejemplo: Rock de los 80'
+      }],
+      buttons: [{
+        text: 'Crear',
+        role: 'Cancel'
+      }]
+    });
+
+    await alertForm.present();
+    const {data} = await alertForm.onWillDismiss();
+    return data? data.values.playlist : null;
+  }
 }

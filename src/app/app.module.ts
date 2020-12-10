@@ -21,6 +21,8 @@ import { MediaReducer } from './reducers/media.redux';
 import { Media } from '@ionic-native/media/ngx';
 import { MediaPlayerEffect } from './effects/mediaplayer.effect';
 import { MusicControlService } from './services/music-control.service';
+import { UserReducer } from './reducers/user.redux';
+import { UserEffect } from './effects/user.effects';
 
 
 @NgModule({
@@ -32,10 +34,11 @@ import { MusicControlService } from './services/music-control.service';
     AppRoutingModule,
     HttpClientModule,
     StoreModule.forRoot({
-      MediaState: MediaReducer
+      MediaState: MediaReducer,
+      UserState: UserReducer
     }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production}),
-    EffectsModule.forRoot([MediaPlayerEffect])
+    EffectsModule.forRoot([MediaPlayerEffect, UserEffect])
   ],
   providers: [
     StatusBar,
