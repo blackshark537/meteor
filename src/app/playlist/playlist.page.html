@@ -1,0 +1,37 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button color="dark"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Playlist</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+      <ion-list-header>
+        <ion-label>{{name | titlecase}}</ion-label>
+      </ion-list-header>
+      <ion-item *ngFor="let track of TrackList;index as i;" (click)="setTrackList(i)" button detail="false">
+        <ion-thumbnail slot="start">
+          <ion-img [src]="track.ImageUrl" ></ion-img>
+        </ion-thumbnail>
+        <ion-label>
+          <div class="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'danger marquee' : 'overfload dark'}}">
+            <p>Track: {{i > 10? i : '0'+(i+1)}} {{ track.Name  | titlecase}} &nbsp;</p>
+          </div>
+          <p class="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'activeTrack' : ''}}">Album: {{track.AlbumName}}</p>
+          <p>Artist: {{track.ArtistName}}</p>
+          <small>Reprocucciones: {{track.Plays}}</small>
+        </ion-label>
+        <ion-icon name="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'pause' : 'play'}}" slot="end"></ion-icon>
+      </ion-item>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="openModal()" color="tertiary" >
+      <ion-icon name="arrow-up"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+

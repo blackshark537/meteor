@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
 import { AudioplayerService } from '../services/audioplayer.service';
 import * as playerActions from '../actions/media.actions';
-import { catchError, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
 import { Platform } from '@ionic/angular';
 import { NativeAudiopalyerService } from '../services/native-audiopalyer.service';
 import { MusicControlService } from '../services/music-control.service';
+import { ApiService } from '../services/Api.service';
+import { catchError, map, exhaustMap, mergeMap, tap } from 'rxjs/operators';
 //import { StorageService } from '../services/storage.service';
 
 @Injectable()
@@ -83,6 +84,17 @@ export class MediaPlayerEffect {
             }),
     ), {dispatch: false});
 
+    incPlays$ = createEffect(
+        () => this.actions.pipe(
+            ofType(playerActions.inc_Plays),
+            tap( ({id})=> {
+                console.log('id from effect: ',id)
+                this.apiService.incPlays(id).subscribe(resp =>{
+                    console.log(resp);
+                });
+            })
+    ), {dispatch: false});
+
     Duration$ = createEffect(
         ()=> this.actions.pipe(
             ofType(playerActions.get_duration),
@@ -140,6 +152,7 @@ export class MediaPlayerEffect {
         private audioPlayer: AudioplayerService,
         private nativeAudioPlayer: NativeAudiopalyerService,
         private audioControls: MusicControlService,
+        private apiService: ApiService,
         //private Storage: StorageService,
         private platform: Platform
     ){ }

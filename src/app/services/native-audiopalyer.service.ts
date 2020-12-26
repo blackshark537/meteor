@@ -70,9 +70,9 @@ export class NativeAudiopalyerService {
           case 4:   // 4: stop
           default:
             console.log('stop...')
-            if(this.appIsActive){
-              if( this.state.currentTime > Math.floor(this.state.duration) -10) this.skipForward();
-            } else {
+            if(!this.appIsActive){
+              /* if( this.state.currentTime > Math.floor(this.state.duration) -10) this.skipForward();
+            } else { */
               if(this.state.isPlaying) this.skipForward(); 
             }
             if(this.state.isPlaying) this.store.dispatch(_Actions.isPlaying({isPlaying: false}));
@@ -89,17 +89,35 @@ export class NativeAudiopalyerService {
   async play_native(track: TrackInterface){
     this.file = await this.media.create(track.TrackUrl);
     await this.file.play();
+    let hasplayed = false;
+
     this.timer.subscribe(async _=>{
+
       if(this.appIsActive){
         await this.store.dispatch(_Actions.get_duration());
         await this.store.dispatch(_Actions.get_current_time());
       }
+
+      if( this.state.currentTime >= this.state.duration * .75){
+        if(!hasplayed) {
+          this.store.dispatch(_Actions.inc_Plays({id: this.state.trackList[this.i]._id}));
+          hasplayed = true;
+        }
+      }
+
     });
 /*     this.cronjob = new CronJob('* * * * * *', ()=> {
       //iT will trigger this every second 
       try {
         this.store.dispatch(_Actions.get_duration());
         this.store.dispatch(_Actions.get_current_time());
+
+        if( this.state.currentTime >= this.state.duration * .75 && this.state.currentTime < this.state.duration * .76 ){
+          if(!hasplayed) {
+            this.store.dispatch(_Actions.inc_Plays({id: this.state.trackList[this.i]._id}));
+            hasplayed = true;
+          }
+        }
       } catch (error) {
         console.error(error);
       }

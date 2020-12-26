@@ -56,8 +56,22 @@ const routes: Routes = [
             canActivate: [GuardGuard],
             loadChildren: () =>
               import('../profile/tab3.module').then(m => m.Tab3PageModule)
+          },
+          {
+            path: 'liked',
+            canActivate: [GuardGuard],
+            loadChildren: () =>
+              import('../liked/liked.module').then(m => m.LikedPageModule)
           }
         ]
+      },
+      {
+        path: 'explore',
+        children: [{
+          path: '',
+          loadChildren: () =>
+            import('../explore/explore.module').then(m => m.ExplorePageModule)
+        }]
       },
       {
         path: '',

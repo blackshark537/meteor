@@ -55,17 +55,34 @@ export class SongsPage implements OnInit, OnDestroy {
     const id = this.activeRoute.snapshot.paramMap.get('id');
     this.albumService.getAlbum(id).subscribe(resp => {
       this.Album = resp;
-      this.Album.canciones.file.forEach((track, index )=>{
-        this.TrackList.push({
-          Name: track.name,
-          TrackUrl: this.url+track.url,
-          ArtistName: this.Album.artistas[0].nombre,
-          AlbumName: this.Album.nombre,
-          TrackNumber: track.id,
-          Duration: track.size,
-          ImageUrl: this.url+this.Album.portada[0].formats.small.url
+      if(this.Album.canciones.tracks.length>0){
+        this.Album.canciones.tracks.forEach((track)=>{
+          this.TrackList.push({
+            _id: track.id,
+            Name: track.nombre,
+            TrackUrl: this.url+track.file.url,
+            ArtistName: this.Album.artistas[0].nombre,
+            AlbumName: this.Album.nombre,
+            TrackNumber: track.id,
+            Plays: track.reproducido,
+            Duration: track.file.size,
+            ImageUrl: this.url+track.image.url
+          });
         });
-      });
+      } else {
+        this.Album.canciones.file.forEach((track)=>{
+          this.TrackList.push({
+            Name: track.name,
+            TrackUrl: this.url+track.url,
+            ArtistName: this.Album.artistas[0].nombre,
+            AlbumName: this.Album.nombre,
+            TrackNumber: track.id,
+            Plays: "0",
+            Duration: track.size,
+            ImageUrl: this.url+this.Album.portada[0].formats.small.url
+          });
+        });
+      }
     });
   }
 
@@ -75,7 +92,7 @@ export class SongsPage implements OnInit, OnDestroy {
 
   setTrackList(index: number){
     this.store.dispatch(_Actions.set_TrackList({trackList: this.TrackList, index}));
-    this.store.dispatch(_Actions.Set_AlbumImg({AlbumImg: this.url + this.Album.portada[0].url}));
+    this.store.dispatch(_Actions.Set_AlbumImg({AlbumImg: this.TrackList[index].ImageUrl}));
     this.openModal();
   }
 

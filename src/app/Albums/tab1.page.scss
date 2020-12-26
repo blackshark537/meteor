@@ -1,0 +1,15 @@
+.welcome-card img {
+  max-height: 35vh;
+  overflow: hidden;
+}
+
+#avatar{
+  margin-top: 5px;
+  margin-right: 20px;
+  margin-bottom: none;
+  width: 100px;
+  height: 100px;
+  img{
+    border-radius: 3em !important;
+  }
+}

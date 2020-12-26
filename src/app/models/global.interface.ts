@@ -18,7 +18,8 @@ export interface LoginResp{
 }
 
 export interface UserInterface{
-    Playlist: [];
+    playlists: userPlaylist[];
+    likes?: Track[];
     blocked: boolean;
     confirmed: boolean;
     created_at: string;
@@ -32,7 +33,7 @@ export interface UserInterface{
 
 export interface userPlaylist{
     id: number;
-    canciones: any[];
+    canciones: Track[];
     created_at: Date;
     nombre: string;
     published_at: Date;
@@ -115,9 +116,29 @@ interface Canciones{
         "url": string;
         "nombre": string;
         "file": FileInterface[];
- }
+        "tracks"?: Track[];
+}
 
- export interface FileInterface{
+export interface Track{
+  "id": number;
+  "nombre": string;
+  "publicado": any;
+  "reproducido": string;
+  "etiquetas": any;
+  "published_at": Date;
+  "created_at": Date;
+  "updated_at": Date;
+  "album": Album;
+  "artist": Artist;
+  "desc": string;
+  "Genero": Categories;
+  "user": UserInterface;
+  "likes": string;
+  "file": FileInterface;
+  "image": Imagen;
+}
+
+export interface FileInterface{
     "id": number;
     "name": string;
     "alternativeText": string;
@@ -163,7 +184,7 @@ export interface TrackDto{
 };
 
 export interface TrackInterface{
-    _id?: string;
+    _id?: any;
     Name?: string;
     TrackNumber?: number,
     TrackUrl?: string;
@@ -171,6 +192,7 @@ export interface TrackInterface{
     Duration?: number;
     CopyRight?: boolean;
     Artist?: string;
+    Plays?: string;
     Album?: string;
     ImageUrl?: string;
     Created?: string;

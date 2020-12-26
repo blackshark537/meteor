@@ -26,6 +26,10 @@ export class AudioplayerService {
   ) { 
     store.select('MediaState').subscribe(state =>{
        this.state = state
+       if(state.currentTime > state.duration * 0.90){
+         //increment plays counter
+         console.log('increment plays count')
+       }
     });
   }
 
@@ -60,6 +64,7 @@ export class AudioplayerService {
         return new Promise((solve, rej)=>{
         try{
           if(this.mediaplayer.canPlayType('audio/mpeg')){
+            let hasplayed = false;
             this.mediaplayer.currentTime = 0;
             this.mediaplayer.src = track.TrackUrl;
             this.mediaplayer.volume = this.volume;
@@ -75,6 +80,13 @@ export class AudioplayerService {
             this.mediaplayer.ontimeupdate = () =>{
               this.store.dispatch(_Actions.get_duration());
               this.store.dispatch(_Actions.get_current_time());
+              if( this.state.currentTime > this.state.duration * .75 ){
+                if(!hasplayed) {
+                  this.store.dispatch(_Actions.inc_Plays({id: this.state.trackList[this.i]._id}));
+                  hasplayed = true;
+                  console.log('inc plays id: ', this.state.trackList[this.i]._id);
+                }
+              }
             }
 
             this.mediaplayer.onended = ()=> this.skipForward();

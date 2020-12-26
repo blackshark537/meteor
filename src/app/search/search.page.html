@@ -17,6 +17,19 @@
 <ion-content>
   <ion-list>
 
+    <div id="container" *ngIf="searched && list.length === 0 && albums.length === 0">
+      <h1>
+        <ion-icon size="large" name="beer-outline"></ion-icon>
+      </h1>
+      <strong class="capitalize" >
+        <ion-icon name="leaf-outline"></ion-icon>
+        No hemos coincidido con su busqueda.
+      </strong>
+      <p>
+        por favor intente otra.
+      </p>
+    </div>
+
     <ion-item *ngFor="let album of albums; index as i" [routerLink]="['/songs', album.id]">
       <ion-thumbnail slot="start">
         <img [src]="album.portada.length>0? url + album.portada[0].formats.thumbnail.url : 'assets/thumbnail.svg'" style="width: 75px; height: auto;">
@@ -27,15 +40,24 @@
         </ion-label>
     </ion-item>
     
-    <ion-item *ngFor="let item of list; index as i" (click)="setTrackList(i)">
+    <ion-item button detail="false" *ngFor="let item of list; index as i" (click)="setTrackList(i)">
       <ion-thumbnail slot="start">
-        <img src="assets/thumbnail.svg" style="width: 75px; height: auto;">
+        <img [src]="item.ImageUrl" style="width: 75px; height: auto;">
       </ion-thumbnail>
         <ion-label>
           <h2>{{item.Name}}</h2>
-          <P>{{item.Created}}</P>
+          <P>Artista: {{item.ArtistName}}</P>
+          <p>Album: {{item.AlbumName}}</p>
+          <small>Reproducido: {{item.Plays}} veces</small>
         </ion-label>
+        <ion-icon name="{{activeTrack === i? 'pause' : 'play'}}" slot="end"></ion-icon>
     </ion-item>
 
   </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+    <ion-fab-button (click)="openModal()" color="tertiary" >
+      <ion-icon name="arrow-up"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>

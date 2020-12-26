@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Explorar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="6" *ngFor="let list of playlists; index as i;" [routerLink]="['/playlist', list.id]">
+        <div class="img-container" [style.background-image]="'url('+ url + list.canciones[0].image.formats.thumbnail.url + ')'">
+            <ion-label style="position: relative; top: 100px;" >
+              <h3>{{list.nombre | titlecase}}</h3>
+              <h4>{{list.user.username | titlecase}}</h4>
+            </ion-label>
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

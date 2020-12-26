@@ -1,10 +1,12 @@
-import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ActionSheetController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
 import { AppState } from '../models/app.state';
 import * as _Actions from '../actions/media.actions';
+import * as _userActions from '../actions/user.actions';
 import { MPState } from '../models/mp.state';
+import { Track, TrackInterface, UserInterface, userPlaylist } from '../models/global.interface';
 
 @Component({
   selector: 'app-media-player',
@@ -14,6 +16,7 @@ import { MPState } from '../models/mp.state';
 export class MediaPlayerPage implements OnInit, OnDestroy {
   
   @Input('fromSongs') fromSongs: boolean = false;
+  @ViewChild('playlistSelect', {static: false}) select;
 
   state: MPState = {
     trackName: '',
@@ -36,18 +39,26 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   secondsTotal: number = 0;
   minutesTotal: number = 0;
 
-  like_me: boolean;
+  like_me: boolean = false;
+  likes: Track[] = [];
+  track: TrackInterface;
+  user_playlists = [];
 
   constructor(
     private modalCtrl: ModalController,
     private store: Store<AppState>,
     private actionSheetCtrl: ActionSheetController
-  ) { }
+  ) { 
+    
+  }
 
   ngOnInit(){
 
+    this.store.select('UserState').subscribe(resp => this.user_playlists = resp.playlists )
+
     this.store.select('MediaState').subscribe(state => {
       this.state = {...state};
+      this.track = state.trackList[state.currentTrack];
       this.duration = state.duration;
       this.minutesTotal = Math.floor(this.duration / 60);
       this.secondsTotal = Math.trunc(this.duration - this.minutesTotal * 60);
@@ -57,8 +68,10 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
       this.seconds = Math.trunc(this.percent - this.minutes * 60);
     });
 
-    this.like_me = false;
-
+    this.store.select('UserState').subscribe(user =>{
+      this.likes = user.likes;
+      this.itLikesMe();
+    });
   }
 
   ngOnDestroy(){
@@ -100,7 +113,7 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
         text: 'add to playList',
         icon: 'add-circle-outline',
         handler: ()=>{
-          console.log("added to playlist");
+          this.select.el.click()
         },
         cssClass: 'dark'
       },{
@@ -116,8 +129,31 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
     await (await actionSheet).present();
   }
 
+  addToList(value){
+    const playlist: userPlaylist = JSON.parse(value);
+    if(playlist.id && this.track._id){
+      console.log(playlist.id, this.track._id);
+    } else {
+      console.log('Invalid track');
+    }
+  }
+
   likeMe(){
-    this.like_me = !this.like_me;
+    //dispatch like
+    console.log(this.itLikesMe());
+    if(!this.like_me ){
+      this.store.dispatch(_userActions.Like({trackId: this.track._id}));
+    }
+  }
+
+  itLikesMe(){
+    for(let i =0; i < this.likes.length; ++i){
+      let t = this.likes[i];
+      if(t.nombre.includes(this.track.Name)) {
+        this.like_me = true;
+        break;
+      }
+    }
   }
 
   repeat(){

@@ -5,7 +5,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,6 +23,7 @@ import { MediaPlayerEffect } from './effects/mediaplayer.effect';
 import { MusicControlService } from './services/music-control.service';
 import { UserReducer } from './reducers/user.redux';
 import { UserEffect } from './effects/user.effects';
+import { TokenInterceptorService } from './services/token-interceptor.service';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import { UserEffect } from './effects/user.effects';
     SplashScreen,
     MusicControlService,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptorService, multi: true},
     Media
   ],
   bootstrap: [AppComponent]

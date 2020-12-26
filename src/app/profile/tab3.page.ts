@@ -14,24 +14,25 @@ import { PopoverComponent } from './popover/popover.component';
 export class Tab3Page implements OnInit{
 
   user: UserInterface = null;
-
+  url: string;
   constructor(
     private store: Store<AppState>,
     private popoverCtrl: PopoverController,
     private globalService: GlobalHttpService
-  ) {}
+  ) {
+    this.url = globalService.baseUrl;
+  }
 
   ngOnInit(){
 
     this.store.select('UserState').subscribe(resp =>{
-      console.log(resp);
       this.user = resp;
     });
   }
 
   async openPlaylistForm(){
     const name = await this.globalService.playlistForm();
-    console.log(name);
+    console.log(`Playlist ${name} created`);
   }
 
   async openPopOver(ev: any){

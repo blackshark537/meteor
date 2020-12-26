@@ -13,11 +13,15 @@
   <div id="cover">
       <img [src]="state.AlbumImg" id="cover-img">
   </div>
+  <ion-select #playlistSelect (ionChange)="addToList($event.target.value);" style="display: none;">
+    <ion-select-option *ngFor="let list of user_playlists" value="{{list | json}}">{{list.nombre | titlecase}}</ion-select-option>
+  </ion-select>
 </ion-header>
 
 <ion-content *ngIf="!fromSongs">
-  
+
 </ion-content>
+
 <ion-footer>
   <ion-toolbar>
     <ion-row>

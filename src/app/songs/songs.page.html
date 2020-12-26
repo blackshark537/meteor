@@ -32,16 +32,17 @@
 
         <ion-list *ngIf="Album && Album.canciones.file.length > 0;">
           <div *ngFor="let track of TrackList; let i=index" >
-            <ion-item (click)="setTrackList(i)" button *ngIf="i<slice">
+            <ion-item (click)="setTrackList(i)" button detail="false" *ngIf="i<slice">
               <ion-thumbnail slot="start">
-                <ion-img [src]="url + Album.portada[0].formats.thumbnail.url" ></ion-img>
+                <ion-img [src]="track.ImageUrl" ></ion-img>
               </ion-thumbnail>
               <ion-label>
                 <div class="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'danger marquee' : 'overfload dark'}}">
                   <p>Track: {{i > 10? i : '0'+(i+1)}} {{ track.Name  | titlecase}} &nbsp;</p>
                 </div>
-                <p *ngIf="activeTrack === (track.Name + ' - ' + track.ArtistName)" style="margin-top: 17px;">Album: {{track.AlbumName}}</p>
-                <p *ngIf="activeTrack != (track.Name + ' - ' + track.ArtistName)">Artist: {{track.ArtistName}}</p>
+                <p class="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'activeTrack' : ''}}">Album: {{track.AlbumName}}</p>
+                <p>Artist: {{track.ArtistName}}</p>
+                <small>Reprocucciones: {{track.Plays}}</small>
               </ion-label>
               <ion-icon name="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'pause' : 'play'}}" slot="end"></ion-icon>
             </ion-item>

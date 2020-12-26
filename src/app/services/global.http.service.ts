@@ -18,7 +18,7 @@ export class GlobalHttpService {
   ) { }
 
   public handelErrors(error: HttpErrorResponse): Observable<any>{
-    this.presentToast(error.message);
+    this.presentToast(error.error.message);
     console.error(error);
     return throwError(error.message);
   }

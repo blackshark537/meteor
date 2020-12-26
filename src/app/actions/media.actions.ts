@@ -16,6 +16,8 @@ export const get_current_time = createAction('[Media Player] get Current Time');
 export const set_duration = createAction('[Media Player] set Duration', props<{duration: number}>());
 export const set_current_time = createAction('[Media Player] set Current Time', props<{currentTime: number}>());
 
+export const inc_Plays = createAction('[Media Player] inc track plays', props<{id: any}>());
+
 export const Set_TrackName = createAction('[Media Player] Track Name', props<{trackName: string}>());
 export const Set_AlbumImg = createAction('[Media Player] Album Img', props<{AlbumImg: string}>());
 export const Set_CurrentTrack = createAction('[Media Player] Current Track', props<{currentTrack: number}>());

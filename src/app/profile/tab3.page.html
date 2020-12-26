@@ -11,7 +11,7 @@
 
 <ion-content [fullscreen]="true">
   <ion-list>
-    <ion-item>
+    <ion-item >
       <ion-label>
         <h2>
           <ion-icon color="dark" name="person" slot="start"></ion-icon>
@@ -27,10 +27,27 @@
         </p>
       </ion-label>
     </ion-item>
+
+    <ion-list >
+      
+        <ion-item button [routerLink]="['liked']">
+          <ion-label>
+            <h1>
+              <ion-icon slot="start" color="dark" name="thumbs-up-outline"></ion-icon>
+              Liked
+            </h1>
+          </ion-label>
+        </ion-item>
+      
+    </ion-list>
+
   </ion-list>
   <ion-list>
     <ion-list-header>
-      <ion-label>Playlists</ion-label>
+      <ion-label>
+        <ion-icon slot="start" color="dark" name="albums-outline"></ion-icon>
+        Playlists
+      </ion-label>
     </ion-list-header>
     <ion-list-header>
       <ion-buttons>
@@ -41,10 +58,12 @@
       </ion-buttons>
     </ion-list-header>
     <ion-item-divider></ion-item-divider>
-    <ion-item button *ngFor="let list of user.playlists; index as i;">
+    <ion-item button *ngFor="let list of user.playlists; index as i;" [routerLink]="['/playlist', list.id]">
+      <ion-icon slot="start" size="large" name="musical-notes-outline"></ion-icon>
       <ion-label>
         <h2>{{list.nombre | titlecase}}</h2>
       </ion-label>
     </ion-item>
   </ion-list>
+
 </ion-content>

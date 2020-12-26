@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar >
+    <ion-title slot="start">
+      <img src="assets/icon.png" style="width: 30px; height: 30px;" alt="">
+      <b>Meteor</b>
+    </ion-title>
+    <ion-button slot="end" color="dark" shape="round"  fill="clear" [routerLink]="['/search']">
+      <ion-icon name="search"></ion-icon>
+    </ion-button>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-grid >
+    <ion-row>
+      <ion-col size="12">
+        <ion-slides [options]="sliderArtistConfig">
+          <ion-slide *ngFor="let artist of artists; index as i;">
+            <div id="avatar">
+              <img [src]="url+artist.imagen.formats.thumbnail.url" width="100%" height="100%">
+            </div>
+          </ion-slide>
+        </ion-slides>
+      </ion-col>
+    </ion-row>
+    <div *ngFor="let catgry of categories; index as i;">
+
+      <ion-row>
+        <ion-col size="12">
+            <ion-list-header>
+              <ion-label>
+                {{catgry.nombre}}
+                <p>Albums: {{catgry.albums.length}}</p>
+              </ion-label>
+            </ion-list-header>
+        </ion-col>
+      </ion-row>
+
+      <ion-slides [options]="sliderConfig">
+        <ion-slide *ngFor="let album of catgry.albums">
+          
+          <ion-card button [routerLink]="['/songs', album.id]" style="max-height: 23.5em;">
+            <img [src]="url + album.portada[0].formats.small.url" style="width: 200px; height: 200px;" alt="cover">
+            <ion-text color="dark">
+              <h4>{{album.nombre.length >16? album.nombre.slice(0,14) + '...' : album.nombre}}</h4>
+            </ion-text>
+            <!-- <small>{{album.publicado}}</small> -->
+          </ion-card>
+        
+        </ion-slide>
+      </ion-slides>
+
+    </div>
+
+  </ion-grid>
+</ion-content>

@@ -17,7 +17,9 @@ export class SearchPage implements OnInit {
 
   list: TrackInterface[] = [];
   albums: Album[] = [];
+  activeTrack: number;
   url = ''
+  searched: boolean = false;
 
   constructor(
     private apiService: ApiService,
@@ -35,20 +37,40 @@ export class SearchPage implements OnInit {
     if(this.search.value.length > 2){
       this.list = [];
       this.albums = [];
+      this.searched = false;
       this.apiService.getTrack(this.search.value).subscribe(resp=>{
-        resp.filter(x => !x.mime.toLowerCase().includes('image')).forEach(async track =>{
-
+        this.searched = true;
+        console.log(resp);
+        resp.forEach(async (track) =>{
           this.list.push({
+            _id: track.id,
+            Name: track.nombre,
+            TrackUrl: this.url+track.file.url,
+            ArtistName: track.artist? track.artist.nombre : '',
+            AlbumName: track.album? track.album.nombre : '',
+            TrackNumber: track.id,
+            Duration: null,
+            Plays: track.reproducido,
+            ImageUrl: this.url + track.image.url
+          });
+        });
+      }, error => this.presentToast(error));
+
+      this.apiService.getTrackFile(this.search.value).subscribe(resp =>{
+        resp.forEach(async track =>{
+          this.list.push({
+            _id: track.id,
             Name: track.name,
             TrackUrl: this.url+track.url,
             ArtistName: '',
             AlbumName: '',
             TrackNumber: track.id,
-            Duration: track.size,
-            ImageUrl: "assets/thumbnail.svg"
+            Duration: null,
+            Plays: "0",
+            ImageUrl: 'assets/thumbnail.svg'
           });
         });
-      }, error => this.presentToast(error));
+      });
 
       this.apiService.getAlbumByName(this.search.value).subscribe(resp=>{
         console.log(resp)
@@ -58,8 +80,9 @@ export class SearchPage implements OnInit {
   }
 
   setTrackList(index: number){
+    this.activeTrack = index;
     this.store.dispatch(_Actions.set_TrackList({trackList: this.list, index}));
-    this.store.dispatch(_Actions.Set_AlbumImg({AlbumImg: '/assets/thumbnail.svg'}));
+    //this.store.dispatch(_Actions.Set_AlbumImg({AlbumImg: this.list[index].ImageUrl}));
     this.openModal();
   }
 

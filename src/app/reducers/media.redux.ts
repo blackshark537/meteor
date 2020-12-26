@@ -3,6 +3,7 @@ import * as actions from '../actions/media.actions';
 import { MPState } from '../models/mp.state';
 
 const initial_state: MPState  = {
+    _id: null,
     AlbumImg: '',
     currentTrack: 0,
     isPlaying: false,
@@ -19,7 +20,12 @@ const load_state: MPState = JSON.parse(localStorage.getItem('state')) || initial
 
 const mediaReducer = createReducer(load_state, 
         on(actions.Set_AlbumImg, (state, {AlbumImg}) => ({...state, AlbumImg})),
-        on(actions.Set_CurrentTrack, (state, {currentTrack}) =>({...state, currentTrack})),
+        on(actions.Set_CurrentTrack, (state, {currentTrack}) =>{
+            let new_state = {...state};
+            new_state.currentTrack = currentTrack;
+            new_state.AlbumImg = state.trackList[currentTrack].ImageUrl;
+            return new_state;
+        }),
         on(actions.Set_TrackName, (state, {trackName})=> ({...state, trackName})),
         on(actions.isPlaying, (state, {isPlaying}) => {
             let new_state = {...state};
@@ -48,7 +54,7 @@ const mediaReducer = createReducer(load_state,
         }),
         on(actions.set_current_time, (state, {currentTime})=> {
             let new_state = {...state}
-            if(currentTime >= 1){
+            if(currentTime >= 0){
                 new_state.currentTime = currentTime;
             }
             return new_state;
