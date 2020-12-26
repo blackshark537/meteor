@@ -1,7 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title slot="start">
-      {{user.username | titlecase}}
+      <img src="assets/icon.png" style="width: 30px; height: 30px;" alt="logo">
+      <b>{{user.username | titlecase}}</b>
     </ion-title>
     <ion-button (click)="openPopOver($event)" slot="end" color="dark" shape="round"  fill="clear">
       <ion-icon name="settings"></ion-icon>

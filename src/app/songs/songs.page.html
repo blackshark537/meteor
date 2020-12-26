@@ -4,7 +4,8 @@
       <ion-back-button color="dark"></ion-back-button>
     </ion-buttons>
     <ion-title>
-      {{Album? Album.nombre : 'Songs'}}
+      <img src="assets/icon.png" style="width: 30px; height: 30px;" alt="logo">
+      <b>{{Album? Album.nombre : 'Songs'}}</b>
     </ion-title>
   </ion-toolbar>
   <ion-searchbar animated [(ngModel)]="search" debounce="500" (keydown)="searchTrack()"></ion-searchbar>
