@@ -12,7 +12,7 @@ import { MPState } from '../models/mp.state';
 export class AudioplayerService {
 
   private mediaplayer = new Audio();
-  private volume = 0.7;
+  private volume = 0.5;
   private state: MPState;
   private trackList: TrackInterface[];
   private i: number;

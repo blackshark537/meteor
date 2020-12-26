@@ -26,4 +26,10 @@ export class ExplorePage implements OnInit {
     });
   }
 
+  doRefresh(event) {
+    setTimeout(()=>{
+      event.target.complete();
+      this.ngOnInit();
+    },2000);
+  }
 }

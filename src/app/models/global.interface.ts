@@ -32,12 +32,12 @@ export interface UserInterface{
 }
 
 export interface userPlaylist{
-    id: number;
+    id?: number;
     canciones: Track[];
-    created_at: Date;
+    created_at?: Date;
     nombre: string;
-    published_at: Date;
-    users_permissions_user: UserInterface
+    published_at?: Date;
+    users_permissions_user?: UserInterface
 }
 
 interface Role{
@@ -62,6 +62,7 @@ interface Role{
     "portada"?: Imagen[];
     "genero"?: Categories[];
     "artistas"?: Artist[];
+    "tracks": Track[];
  }
 
  export interface Artist{

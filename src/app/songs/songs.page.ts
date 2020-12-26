@@ -22,6 +22,7 @@ export class SongsPage implements OnInit, OnDestroy {
     id: null,
     nombre: '',
     artistas: [],
+    tracks:[],
     canciones:{
       file: [],
       id: null,
@@ -35,7 +36,7 @@ export class SongsPage implements OnInit, OnDestroy {
   search: string = '';
 
   constructor(
-    private global: GlobalHttpService,
+    global: GlobalHttpService,
     private albumService: ApiService,
     private activeRoute: ActivatedRoute,
     private modalController: ModalController,
@@ -55,7 +56,7 @@ export class SongsPage implements OnInit, OnDestroy {
     const id = this.activeRoute.snapshot.paramMap.get('id');
     this.albumService.getAlbum(id).subscribe(resp => {
       this.Album = resp;
-      if(this.Album.canciones.tracks.length>0){
+      if(this.Album.tracks.length>0){
         this.Album.canciones.tracks.forEach((track)=>{
           this.TrackList.push({
             _id: track.id,

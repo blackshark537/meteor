@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { createEffect, Actions, ofType } from '@ngrx/effects';
-import { props } from '@ngrx/store';
-import { merge, of } from 'rxjs';
-import { catchError, exhaustMap, map, mergeMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { catchError, tap, exhaustMap, map, mergeMap } from 'rxjs/operators';
 import * as user_Action from '../actions/user.actions';
 import { ApiService } from '../services/Api.service';
 
@@ -50,6 +49,24 @@ export class UserEffect {
     this.actions$.pipe(
       ofType(user_Action.Like),
       exhaustMap(payload => this.apiService.like(payload.trackId).pipe(
+        map(resp => user_Action.GetUser()),
+        catchError(error => of(user_Action.Error({error})))
+      ))
+    ));
+
+    createPlaylist$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(user_Action.CreatePlayist),
+      exhaustMap(payload => this.apiService.createPlaylist(payload.nombre).pipe(
+        map(resp => user_Action.GetUser()),
+        catchError(error => of(user_Action.Error({error})))
+      ))
+    ));
+
+    addToPlaylist$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(user_Action.addToPlaylist),
+      exhaustMap(({playlistId, trackId}) => this.apiService.addToPlaylist({listId:playlistId, trackId }).pipe(
         map(resp => user_Action.GetUser()),
         catchError(error => of(user_Action.Error({error})))
       ))

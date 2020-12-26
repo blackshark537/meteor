@@ -38,7 +38,7 @@
               </ion-thumbnail>
               <ion-label>
                 <div class="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'danger marquee' : 'overfload dark'}}">
-                  <p>Track: {{i > 10? i : '0'+(i+1)}} {{ track.Name  | titlecase}} &nbsp;</p>
+                  <p>Track: {{i < 9? '0'+(i+1) : (i+1)}} {{ track.Name  | titlecase}} &nbsp;</p>
                 </div>
                 <p class="{{activeTrack === (track.Name + ' - ' + track.ArtistName)? 'activeTrack' : ''}}">Album: {{track.AlbumName}}</p>
                 <p>Artist: {{track.ArtistName}}</p>

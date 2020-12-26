@@ -88,4 +88,18 @@ export class ApiService {
     return this.http.get<userPlaylist[]>(`${this.url}/playlists`)
     .pipe( catchError(error => this.globalHttp.handelErrors(error)));
   }
+
+  createPlaylist(name: string): Observable<userPlaylist>{
+    let user_Playlist: userPlaylist = {
+      nombre: name,
+      canciones:[]
+    }
+    return this.http.post<userPlaylist>(`${this.url}/playlists`, user_Playlist)
+    .pipe( catchError(error => this.globalHttp.handelErrors(error)));
+  }
+
+  addToPlaylist(opts: {listId: any, trackId:any}): Observable<userPlaylist>{
+    return this.http.put<userPlaylist>(`${this.url}/playlist/${opts.listId}/add/${opts.trackId}`, null)
+    .pipe( catchError(error => this.globalHttp.handelErrors(error)));
+  }
 }

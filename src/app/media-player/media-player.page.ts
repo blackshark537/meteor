@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { ActionSheetController } from '@ionic/angular';
 import { Store } from '@ngrx/store';
@@ -6,14 +6,14 @@ import { AppState } from '../models/app.state';
 import * as _Actions from '../actions/media.actions';
 import * as _userActions from '../actions/user.actions';
 import { MPState } from '../models/mp.state';
-import { Track, TrackInterface, UserInterface, userPlaylist } from '../models/global.interface';
+import { Track, TrackInterface, userPlaylist } from '../models/global.interface';
 
 @Component({
   selector: 'app-media-player',
   templateUrl: './media-player.page.html',
   styleUrls: ['./media-player.page.scss'],
 })
-export class MediaPlayerPage implements OnInit, OnDestroy {
+export class MediaPlayerPage implements OnInit {
   
   @Input('fromSongs') fromSongs: boolean = false;
   @ViewChild('playlistSelect', {static: false}) select;
@@ -74,16 +74,10 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(){
-  }
-
   togglePlayer(){
     if(this.state.isPlaying){
       this.store.dispatch(_Actions.pause());
     } else {
-      /* if(this.state.trackList.length != 0 && !this.fromSongs){
-        this.store.dispatch(_Actions.set_TrackList({trackList: this.state.trackList, index: this.state.currentTrack}));
-      } else { }*/ 
         this.store.dispatch(_Actions.resume());
     }
   }
@@ -132,9 +126,12 @@ export class MediaPlayerPage implements OnInit, OnDestroy {
   addToList(value){
     const playlist: userPlaylist = JSON.parse(value);
     if(playlist.id && this.track._id){
-      console.log(playlist.id, this.track._id);
+      this.store.dispatch(_userActions.addToPlaylist({
+        playlistId: playlist.id,
+        trackId: this.track._id
+      }));
     } else {
-      console.log('Invalid track');
+      throw new Error('Invalid track');
     }
   }
 

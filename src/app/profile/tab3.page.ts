@@ -5,6 +5,7 @@ import { AppState } from '../models/app.state';
 import { UserInterface } from '../models/global.interface';
 import { GlobalHttpService } from '../services/global.http.service';
 import { PopoverComponent } from './popover/popover.component';
+import * as _userActions from '../actions/user.actions';
 
 @Component({
   selector: 'app-tab3',
@@ -32,7 +33,7 @@ export class Tab3Page implements OnInit{
 
   async openPlaylistForm(){
     const name = await this.globalService.playlistForm();
-    console.log(`Playlist ${name} created`);
+    this.store.dispatch(_userActions.CreatePlayist({nombre: name}));
   }
 
   async openPopOver(ev: any){
