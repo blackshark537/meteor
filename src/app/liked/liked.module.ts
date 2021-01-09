@@ -8,12 +8,14 @@ import { LikedPageRoutingModule } from './liked-routing.module';
 
 import { LikedPage } from './liked.page';
 import { MediaPlayerPage } from '../media-player/media-player.page';
+import { ShareModule } from '../share/share.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    ShareModule,
     LikedPageRoutingModule
   ],
   declarations: [LikedPage, MediaPlayerPage]

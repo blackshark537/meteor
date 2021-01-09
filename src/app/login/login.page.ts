@@ -67,7 +67,6 @@ export class LoginPage implements OnInit {
         password: this.userForm.get('password').value
       }}));
       this.wait();
-
     }else{
       //signin
       this.store.dispatch(CreateUser({user: {
@@ -77,6 +76,7 @@ export class LoginPage implements OnInit {
       }}));
       this.wait();
       this.showMsg('Por favor inicie session...');
+      this.userForm.controls['password'].setValue('');
       this.toggle();
     }
   }

@@ -32,7 +32,7 @@ export class Tab3Page implements OnInit{
   }
 
   async openPlaylistForm(){
-    const name = await this.globalService.playlistForm();
+    const name: string = await this.globalService.playlistForm();
     this.store.dispatch(_userActions.CreatePlayist({nombre: name}));
   }
 

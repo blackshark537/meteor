@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient} from '@angular/common/http';
 import { GlobalHttpService } from './global.http.service';
 import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, shareReplay } from 'rxjs/operators';
 import { UserInterface, Album, Artist, Categories, FileInterface, LoginResp, LoginUser, RegisterUser, Track, userPlaylist } from '../models/global.interface';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class ApiService {
 
   create_user(data: RegisterUser): Observable<LoginResp>{
     return this.http.post<LoginResp>(`${this.globalHttp.baseUrl}/auth/local/register`, data)
-    .pipe(catchError(error => this.globalHttp.handelErrors(error)));
+    .pipe(shareReplay(),catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   login(data: LoginUser): Observable<LoginResp>{
@@ -100,6 +100,11 @@ export class ApiService {
 
   addToPlaylist(opts: {listId: any, trackId:any}): Observable<userPlaylist>{
     return this.http.put<userPlaylist>(`${this.url}/playlist/${opts.listId}/add/${opts.trackId}`, null)
+    .pipe( catchError(error => this.globalHttp.handelErrors(error)));
+  }
+
+  deletePlaylist(id: any): Observable<userPlaylist>{
+    return this.http.delete<userPlaylist>(`${this.url}/playlists/${id}`)
     .pipe( catchError(error => this.globalHttp.handelErrors(error)));
   }
 }

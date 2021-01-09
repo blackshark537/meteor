@@ -24,7 +24,7 @@ const routes: Routes = [
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
-    path: 'playlist/:id',
+    path: 'playlist/:id/:profile',
     loadChildren: () => import('./playlist/playlist.module').then(m => m.PlaylistPageModule)
   },
   {

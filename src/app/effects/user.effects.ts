@@ -21,10 +21,9 @@ export class UserEffect {
     this.actions$.pipe(
       ofType(user_Action.CreateUser),
       exhaustMap(payload => this.apiService.create_user(payload.user).pipe(
-          map(user => user_Action.LogInUpSuccess({payload: user})),
           catchError(error => of(user_Action.Error({error})))
       ))
-    ));
+    ), {dispatch: false});
 
     Me$ = createEffect(()=>
     this.actions$.pipe(
@@ -67,6 +66,15 @@ export class UserEffect {
     this.actions$.pipe(
       ofType(user_Action.addToPlaylist),
       exhaustMap(({playlistId, trackId}) => this.apiService.addToPlaylist({listId:playlistId, trackId }).pipe(
+        map(resp => user_Action.GetUser()),
+        catchError(error => of(user_Action.Error({error})))
+      ))
+    ));
+
+    deletePlaylist$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(user_Action.deletePlaylist),
+      exhaustMap(({id}) => this.apiService.deletePlaylist(id).pipe(
         map(resp => user_Action.GetUser()),
         catchError(error => of(user_Action.Error({error})))
       ))

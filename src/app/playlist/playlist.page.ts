@@ -1,13 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
-import { Store } from '@ngrx/store';
-import { MediaPlayerPage } from '../media-player/media-player.page';
-import { AppState } from '../models/app.state';
-import { TrackInterface } from '../models/global.interface';
-import * as _Actions from '../actions/media.actions';
+import { Track } from '../models/global.interface';
 import { GlobalHttpService } from '../services/global.http.service';
 import { ApiService } from '../services/Api.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-playlist',
@@ -16,61 +12,31 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class PlaylistPage implements OnInit {
 
-  TrackList: TrackInterface[] = [];
+  TrackList: Track[] = [];
   url: string;
   name: string = '';
+  listId;
+  fromProfile$: Subject<boolean> = new BehaviorSubject(false);
 
   constructor(
-    global: GlobalHttpService,
-    private store:Store<AppState>,
+    private global: GlobalHttpService,
     private apiService: ApiService,
-    private modalController: ModalController,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    
   ) { 
-    this.url = global.baseUrl;
+    this.url = this.global.baseUrl;
   }
 
   ngOnInit() {
-    const id = this.activatedRoute.snapshot.paramMap.get('id');
-    this.apiService.getPlaylist(id).subscribe(resp =>{
+    this.listId = this.activatedRoute.snapshot.paramMap.get('id');
+    
+    const Profile = this.activatedRoute.snapshot.paramMap.get('profile') == 'true'? true : false;
+    this.fromProfile$.next(Profile);
+
+    this.apiService.getPlaylist(this.listId).subscribe(resp =>{
       this.name = resp.nombre;
-      this.TrackList = [];
-      resp.canciones.forEach(track =>{
-        this.TrackList.push({
-          _id: track.id,
-          Name: track.nombre,
-          TrackUrl: this.url+track.file.url,
-          ArtistName: track.artist? track.artist.nombre : '',
-          AlbumName: track.album? track.album.nombre : '',
-          TrackNumber: track.id,
-          Duration: null,
-          Plays: track.reproducido,
-          ImageUrl: this.url + track.image.url
-        });
-      });
+      this.TrackList = resp.canciones;
     });
   }
 
-  setTrackList(index: number){
-    this.store.dispatch(_Actions.set_TrackList({trackList: this.TrackList, index}));
-    this.store.dispatch(_Actions.Set_AlbumImg({AlbumImg: this.TrackList[index].ImageUrl}));
-    this.openModal();
-  }
-
-  //Open the media player page
-  async openModal(){
-    const modal = await this.modalController.create({
-      component: MediaPlayerPage,
-      animated: true,
-      id: 'mediaplayer',
-      backdropDismiss: true,
-      swipeToClose: true,
-      mode: 'ios',
-      showBackdrop: true,
-      componentProps: {
-        fromSongs: true
-      }
-    });
-    await modal.present();
-  }
 }

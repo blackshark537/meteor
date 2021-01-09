@@ -37,7 +37,13 @@ export class GlobalHttpService {
       header: config.title,
       message: config.msg,
       keyboardClose: false,
-      backdropDismiss: false
+      backdropDismiss: false,
+      buttons:[
+        {
+          text: 'Ok',
+          role: 'cancel'
+        }
+      ]
     });
 
     await alert.present();
@@ -80,5 +86,24 @@ export class GlobalHttpService {
     await alertForm.present();
     const {data} = await alertForm.onWillDismiss();
     return data? data.values.playlist : null;
+  }
+
+  async confirmAlert(msg: string): Promise<boolean>{
+    let confirm = false;
+    const alertC = await this.alertCtrl.create({
+      animated: true,
+      buttons:[{
+        text: 'Cancel',
+        role: 'cancel'
+      },{
+        text: 'Okay',
+        handler: () => confirm = true
+      }],
+      message: msg,
+      header: "Confirm"
+    });
+    await alertC.present();
+    await alertC.onWillDismiss();
+    return confirm;
   }
 }

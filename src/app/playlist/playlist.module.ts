@@ -8,12 +8,14 @@ import { PlaylistPageRoutingModule } from './playlist-routing.module';
 
 import { PlaylistPage } from './playlist.page';
 import { MediaPlayerPage } from '../media-player/media-player.page';
+import { ShareModule } from '../share/share.module';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
+    ShareModule,
     PlaylistPageRoutingModule
   ],
   declarations: [PlaylistPage, MediaPlayerPage]

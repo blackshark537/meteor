@@ -24,6 +24,7 @@ import { MusicControlService } from './services/music-control.service';
 import { UserReducer } from './reducers/user.redux';
 import { UserEffect } from './effects/user.effects';
 import { TokenInterceptorService } from './services/token-interceptor.service';
+import { ShareModule } from './share/share.module';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { TokenInterceptorService } from './services/token-interceptor.service';
       UserState: UserReducer
     }),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: environment.production}),
-    EffectsModule.forRoot([MediaPlayerEffect, UserEffect])
+    EffectsModule.forRoot([MediaPlayerEffect, UserEffect]),
+    ShareModule,
   ],
   providers: [
     StatusBar,

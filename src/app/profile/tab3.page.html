@@ -59,7 +59,7 @@
       </ion-buttons>
     </ion-list-header>
     <ion-item-divider></ion-item-divider>
-    <ion-item button *ngFor="let list of user.playlists; index as i;" [routerLink]="['/playlist', list.id]">
+    <ion-item button *ngFor="let list of user.playlists; index as i;" [routerLink]="['/playlist', list.id, true]">
       <ion-icon slot="start" size="large" name="musical-notes-outline"></ion-icon>
       <ion-label>
         <h2>{{list.nombre | titlecase}}</h2>

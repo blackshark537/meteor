@@ -12,5 +12,6 @@ export const Like = createAction('[User Actions] like track', props<{trackId: an
 
 export const CreatePlayist = createAction('[User Actions] Create playlist', props<{nombre: string}>());
 export const addToPlaylist = createAction('[User Actions] add track to playlist', props<{playlistId: any, trackId: any}>());
+export const deletePlaylist = createAction('[User Action] delete playlist by id', props<{id: any}>());
 export const Error = createAction('[User Actions] Http Error Response', props<{error: HttpErrorResponse}>());
 export const BfExit = createAction('[User Actions] Before Exit');
