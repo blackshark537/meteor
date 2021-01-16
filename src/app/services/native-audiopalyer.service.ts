@@ -71,8 +71,6 @@ export class NativeAudiopalyerService {
           default:
             console.log('stop...')
             if(!this.appIsActive){
-              /* if( this.state.currentTime > Math.floor(this.state.duration) -10) this.skipForward();
-            } else { */
               if(this.state.isPlaying) this.skipForward(); 
             }
             if(this.state.isPlaying) this.store.dispatch(_Actions.isPlaying({isPlaying: false}));

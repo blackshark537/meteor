@@ -49,44 +49,44 @@ export class ApiService {
 
   getCategories(name?: string): Observable<Categories[]>{
     return this.http.get<Categories[]>(`${this.url}/categories?_limit=10&_sort=nombre%3AASC&_q=${name}`)
-      .pipe(catchError(error => this.globalHttp.handelErrors(error)));
+    .pipe(shareReplay(),catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   getArtists(): Observable<Artist[]>{
     return this.http.get<Artist[]>(`${this.url}/artists?_sort=nombre%3AASC`)
-    .pipe(catchError(error => this.globalHttp.handelErrors(error)));
+    .pipe(shareReplay(),catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   getAlbum(id: string): Observable<Album>{
     return this.http.get<Album>(`${this.url}/albums/${id}`)
-    .pipe( catchError(error => this.globalHttp.handelErrors(error)));
+    .pipe(shareReplay(),catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   getTrack(name: string): Observable<Track[]>{
     return this.http.get<Track[]>(
       `${this.url}/tracks?_limit=10&_sort=keywords%3AASC&&_q=${name}`
-      ).pipe( catchError(error => this.globalHttp.handelErrors(error)));
+      ).pipe(shareReplay(),catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   getTrackFile(name: string): Observable<FileInterface[]>{
     return this.http.get<FileInterface[]>(
       `${this.url}/upload/files?_limit=10&_q=${name}`
-      ).pipe( catchError(error => this.globalHttp.handelErrors(error)));
+      ).pipe(shareReplay(),catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   getAlbumByName(name: string): Observable<Album[]>{
     return this.http.get<Album[]>(`${this.url}/albums?_limit=10&_sort=nombre%3AASC&_q=${name}`)
-      .pipe( catchError(error => this.globalHttp.handelErrors(error)));
+    .pipe(shareReplay(),catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   getPlaylist(id: any): Observable<userPlaylist>{
     return this.http.get<userPlaylist>(`${this.url}/playlists/${id}`)
-    .pipe( catchError(error => this.globalHttp.handelErrors(error)));
+    .pipe(shareReplay(),catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   getPlaylists(): Observable<userPlaylist[]>{
     return this.http.get<userPlaylist[]>(`${this.url}/playlists`)
-    .pipe( catchError(error => this.globalHttp.handelErrors(error)));
+    .pipe(shareReplay(),catchError(error => this.globalHttp.handelErrors(error)));
   }
 
   createPlaylist(name: string): Observable<userPlaylist>{

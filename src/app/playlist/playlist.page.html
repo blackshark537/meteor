@@ -12,7 +12,7 @@
 
 <ion-content>
 
-  <app-list *ngIf="TrackList.length > 0" [name]="name" [Tracks]="TrackList"></app-list>
+  <app-list *ngIf="TrackList.length > 0" [can_delete]="fromProfile$ | async" [name]="name" [Tracks]="TrackList"></app-list>
 
 </ion-content>
 

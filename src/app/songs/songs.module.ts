@@ -9,6 +9,7 @@ import { SongsPageRoutingModule } from './songs-routing.module';
 import { SongsPage } from './songs.page';
 import { MediaPlayerPage } from '../media-player/media-player.page';
 import { MediaPlayerPageModule } from '../media-player/media-player.module';
+import { ShareModule } from '../share/share.module';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { MediaPlayerPageModule } from '../media-player/media-player.module';
     CommonModule,
     FormsModule,
     IonicModule,
+    ShareModule,
     SongsPageRoutingModule,
     MediaPlayerPageModule
   ],

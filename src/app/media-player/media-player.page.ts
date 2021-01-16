@@ -69,7 +69,7 @@ export class MediaPlayerPage implements OnInit {
     });
 
     this.store.select('UserState').subscribe(user =>{
-      this.likes = user.likes;
+      this.likes = user.likes?  user.likes : [];
       this.itLikesMe();
     });
   }

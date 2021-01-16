@@ -17,13 +17,18 @@ import { MediaPlayerPage } from '../../media-player/media-player.page';
 export class ListComponent implements OnInit {
 
   @Input('name') name: string;
+  @Input('album') album: string = '';
+  @Input('artist') artist: string = '';
   @Input('Tracks') Tracks:Track[];
+  @Input('can_delete') can_delete = false;
 
   @Output('open') open = new EventEmitter();
+  @Output('delete') delete = new EventEmitter();
 
   TrackList:TrackInterface[] = [];
   url: string = '';
   listId;
+  slice = 15;
 
   constructor(
     private globalService: GlobalHttpService,
@@ -36,13 +41,13 @@ export class ListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.Tracks.forEach(track =>{
+    this.Tracks.forEach((track, i )=>{
       this.TrackList.push({
         _id: track.id,
         Name: track.nombre,
         TrackUrl: this.url+track.file.url,
-        ArtistName: track.artist? track.artist.nombre : '',
-        AlbumName: track.album? track.album.nombre : '',
+        ArtistName: track.artist.nombre? track.artist.nombre : this.artist,
+        AlbumName: track.album.nombre? track.album.nombre : this.album,
         TrackNumber: track.id,
         Duration: null,
         Plays: track.reproducido,
@@ -57,13 +62,24 @@ export class ListComponent implements OnInit {
     this.openModal();
   }
 
-  deleteList(){
-    this.store.dispatch(user_Actions.deletePlaylist({id: this.listId}));
-    this.router.navigate(['tabs/tab3']);
+  deleteOne(id){
+    this.delete.emit(id);
   }
 
-  async showConfirm(){
-    if(await this.globalService.confirmAlert('Do you want to delete this list?')) this.deleteList();
+  async showConfirm(id){
+    if(await this.globalService.confirmAlert('Do you want to delete this list?')) this.deleteOne(id);
+  }
+
+  loadData(evt){
+    setTimeout(() => {
+      this.slice += 10;
+      evt.target.complete();
+      // App logic to determine if all data is loaded
+      // and disable the infinite scroll
+      if (this.slice == this.TrackList.length) {
+        evt.target.disabled = true;
+      }
+    }, 500);
   }
 
   async openModal(){

@@ -36,6 +36,10 @@ export class Tab3Page implements OnInit{
     this.store.dispatch(_userActions.CreatePlayist({nombre: name}));
   }
 
+  deletePlaylist(id){
+    this.store.dispatch(_userActions.deletePlaylist({id}));
+  }
+
   async openPopOver(ev: any){
     const popover = await this.popoverCtrl.create({
       component: PopoverComponent,

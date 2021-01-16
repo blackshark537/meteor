@@ -43,7 +43,7 @@
         <ion-slide *ngFor="let album of catgry.albums">
           
           <ion-card button [routerLink]="['/songs', album.id]" style="max-height: 23.5em;">
-            <img [src]="url + album.portada[0].formats.small.url" style="width: 200px; height: 200px;" alt="cover">
+            <img [src]="url + album.portada.formats.small.url" style="width: 200px; height: 200px;" alt="cover">
             <ion-text color="dark">
               <h4>{{album.nombre.length >16? album.nombre.slice(0,14) + '...' : album.nombre}}</h4>
             </ion-text>

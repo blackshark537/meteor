@@ -132,8 +132,6 @@ export class MusicControlService {
   }
 
   async destroy(){
-    await MusicControls.destroy().then(val =>{
-      //this.store.dispatch(_Actions.pause());
-    });
+    await MusicControls.destroy();
   }
 }
